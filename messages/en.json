@@ -46,5 +46,37 @@
     "checking": "Checking…",
     "displayFont": "Satoshi — display",
     "bodyFont": "Inter — body"
+  },
+  "common": {
+    "close": "Close",
+    "back": "Back",
+    "copy": "Copy",
+    "copied": "Copied",
+    "tryAgain": "Try again",
+    "unavailable": "Unavailable right now",
+    "synced": "Synced {time}",
+    "notCompleted": "not completed",
+    "required": "required",
+    "loading": "Loading…"
+  },
+  "status": {
+    "pending": "Pending",
+    "processing": "Processing",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "failed": "Failed",
+    "cancelled": "Cancelled",
+    "active": "Active",
+    "inactive": "Inactive",
+    "disabled": "Disabled",
+    "readOnly": "Read-only",
+    "verified": "Verified",
+    "expired": "Expired",
+    "locked": "Locked",
+    "live": "Live",
+    "ended": "Ended",
+    "open": "Open",
+    "awaitingReply": "Awaiting your reply",
+    "closed": "Closed"
   }
 }

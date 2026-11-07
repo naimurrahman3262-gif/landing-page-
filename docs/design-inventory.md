@@ -1,5 +1,7 @@
 # Design inventory
 
+> **Update (Phase 2):** you chose the **neutral graphite** direction from the moodboard (option a in §3). Final tokens are in `src/styles/tokens.css` and on `/dev/components`. All screens remain "designed by Claude — needs review".
+
 _Phase 1 · inspected 7 Nov 2026 · source: Figma file `j0OCCw9EOSmuNzH8VIKcNe` ("WinproFx"), via the Figma MCP. `/design-refs/` in the repo is empty._
 
 ## 1. Summary

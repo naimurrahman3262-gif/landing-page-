@@ -1,28 +1,32 @@
 /*
- * WinproFX design tokens.
+ * WinproFX design tokens: neutral graphite (Phase 2).
  *
- * STATUS: PLACEHOLDER (Phase 1).
- * Values below are the defaults from the build brief (section 3). The Figma
- * file supplied so far is an inspiration moodboard, not WinproFX screens, so no
- * tokens could be extracted yet. See docs/design-inventory.md §3.
- * Final values are set in Phase 2 once the open token questions are answered.
+ * Direction: the "WinproFx" Figma moodboard (graphite surfaces, low-saturation
+ * greys), with the fixed brand cyan #00D9FF. Every text/surface pair is
+ * contrast-checked in tests/unit/tokens.test.ts (WCAG 2.1 AA: 4.5:1 text,
+ * 3:1 UI boundaries and chart marks). Change a value → the test re-verifies it.
  */
 
-:root {
+:root,
+[data-theme="dark"] {
   color-scheme: dark;
 
-  /* surfaces */
-  --bg: #0b1020;
-  --surface-1: #121931;
-  --surface-2: #1a2240;
-  --surface-3: #232c4d;
-  --border: #2a3458;
-  --border-strong: #3a4670;
+  /* surfaces (elevation goes up with the number) */
+  --bg: #0a0a0c;
+  --surface-1: #131417;
+  --surface-2: #1a1b1f;
+  --surface-3: #232429;
+  --overlay: rgb(0 0 0 / 0.64);
+
+  /* borders */
+  --border: #2a2b31; /* dividers, card outlines (decorative) */
+  --border-strong: #3d3f46; /* emphasised dividers, hover outlines */
+  --border-input: #666a73; /* form controls: ≥ 3:1 vs every surface */
 
   /* text */
-  --text-1: #f5f7ff;
-  --text-2: #b6bed8;
-  --text-3: #8790b0; /* must pass 4.5:1 on --surface-1 — verified in Phase 2 */
+  --text-1: #f4f5f7;
+  --text-2: #b3b7bf;
+  --text-3: #8d929b; /* ≥ 4.5:1 on bg, surface-1, surface-2 */
 
   /* brand (fixed) */
   --primary: #00d9ff;
@@ -30,53 +34,96 @@
   --primary-active: #00adcc;
   --primary-soft: rgb(0 217 255 / 0.12);
   --primary-border: rgb(0 217 255 / 0.4);
-  --primary-text: var(--primary); /* cyan text is fine on dark surfaces */
-  --on-primary: #00141a; /* dark text on cyan; white on #00D9FF fails contrast */
+  --primary-text: #00d9ff; /* links, active nav text on dark */
+  --on-primary: #00141a; /* dark text on cyan (11:1). White would be 1.7:1 */
   --focus-ring: #00d9ff;
 
-  /* semantic */
-  --success: #22c55e;
+  /* semantic: base = icons/fills, -text = text on surfaces, -soft = badge bg */
+  --success: #2fd072;
+  --success-text: #2fd072;
+  --success-soft: rgb(47 208 114 / 0.14);
   --warning: #f5a524;
-  --danger: #ef4444;
-  --info: #38bdf8;
+  --warning-text: #f5a524;
+  --warning-soft: rgb(245 165 36 / 0.14);
+  --danger: #ff5a5f;
+  --danger-text: #ff5a5f;
+  --danger-soft: rgb(255 90 95 / 0.14);
+  --on-danger: #1a0506; /* dark text on the bright dark-theme red */
+  --info: #4cc3fa;
+  --info-text: #4cc3fa;
+  --info-soft: rgb(76 195 250 / 0.14);
+  --neutral-soft: rgb(179 183 191 / 0.12);
 
   /* money direction (not status) */
-  --money-in: var(--success);
+  --money-in: var(--success-text);
   --money-out: var(--text-1);
+
+  /* charts: series 1 is brand cyan; 2–3 stay distinct under common colour-vision deficiencies */
+  --chart-1: #00d9ff;
+  --chart-2: #e69f00;
+  --chart-3: #b794f6;
+  --chart-grid: #2a2b31;
+  --chart-area-from: rgb(0 217 255 / 0.28);
+  --chart-area-to: rgb(0 217 255 / 0);
 
   /* radius, shadow, motion */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
   --radius-xl: 20px;
-  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3);
-  --shadow-2: 0 8px 24px rgb(0 0 0 / 0.35);
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-2: 0 12px 32px rgb(0 0 0 / 0.5);
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --dur-fast: 120ms;
   --dur-base: 200ms;
 }
 
-/* Light theme — PLACEHOLDER set, completed and contrast-checked in Phase 2. */
 [data-theme="light"] {
   color-scheme: light;
 
-  --bg: #f6f8fc;
+  --bg: #f6f7f8;
   --surface-1: #ffffff;
-  --surface-2: #f0f3f9;
-  --surface-3: #e6eaf3;
-  --border: #d8deea;
-  --border-strong: #b9c2d6;
+  --surface-2: #f1f2f4;
+  --surface-3: #e7e8eb;
+  --overlay: rgb(14 15 17 / 0.48);
 
-  --text-1: #0b1020;
-  --text-2: #3a4560;
-  --text-3: #5b6680;
+  --border: #e1e3e7;
+  --border-strong: #b0b4bc;
+  --border-input: #858a94;
 
-  --primary-text: #007a99; /* #00D9FF on white is ~1.6:1; use darker cyan for text */
-  --primary-soft: rgb(0 217 255 / 0.14);
-  --primary-border: rgb(0 173 204 / 0.5);
-  --focus-ring: #007a99;
+  --text-1: #0e0f11;
+  --text-2: #43464d;
+  --text-3: #5e626b;
 
-  --money-out: var(--text-1);
+  /* cyan stays the button fill (with dark text); text uses a darker cyan */
+  --primary-soft: rgb(0 173 204 / 0.12);
+  --primary-border: rgb(0 112 141 / 0.45);
+  --primary-text: #00708d;
+  --focus-ring: #00708d;
+
+  --success: #16a34a;
+  --success-text: #127436;
+  --success-soft: rgb(22 163 74 / 0.12);
+  --warning: #d97706;
+  --warning-text: #94540a;
+  --warning-soft: rgb(217 119 6 / 0.12);
+  --danger: #dc2626;
+  --danger-text: #c42929;
+  --danger-soft: rgb(220 38 38 / 0.1);
+  --on-danger: #ffffff;
+  --info: #0284c7;
+  --info-text: #0369a1;
+  --info-soft: rgb(2 132 199 / 0.1);
+  --neutral-soft: rgb(67 70 77 / 0.08);
+
+  /* #00D9FF is 1.6:1 on white, so light charts use a darker cyan for series 1 */
+  --chart-1: #0a93b5;
+  --chart-2: #b76e00;
+  --chart-3: #7c4ddb;
+  --chart-grid: #e1e3e7;
+  --chart-area-from: rgb(10 147 181 / 0.2);
+  --chart-area-to: rgb(10 147 181 / 0);
+
   --shadow-1: 0 1px 2px rgb(16 24 40 / 0.06);
-  --shadow-2: 0 8px 24px rgb(16 24 40 / 0.1);
+  --shadow-2: 0 12px 32px rgb(16 24 40 / 0.12);
 }

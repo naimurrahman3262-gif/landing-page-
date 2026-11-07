@@ -6,12 +6,17 @@
 
 /* Map tokens into Tailwind. Components use these utilities, never raw hex. */
 @theme inline {
+  /* Remove Tailwind's default palette so only token colours exist (no bg-red-500 etc.). */
+  --color-*: initial;
+
   --color-bg: var(--bg);
   --color-surface-1: var(--surface-1);
   --color-surface-2: var(--surface-2);
   --color-surface-3: var(--surface-3);
+  --color-overlay: var(--overlay);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
+  --color-border-input: var(--border-input);
 
   --color-text-1: var(--text-1);
   --color-text-2: var(--text-2);
@@ -27,9 +32,23 @@
   --color-focus-ring: var(--focus-ring);
 
   --color-success: var(--success);
+  --color-success-text: var(--success-text);
+  --color-success-soft: var(--success-soft);
   --color-warning: var(--warning);
+  --color-warning-text: var(--warning-text);
+  --color-warning-soft: var(--warning-soft);
   --color-danger: var(--danger);
+  --color-danger-text: var(--danger-text);
+  --color-danger-soft: var(--danger-soft);
+  --color-on-danger: var(--on-danger);
   --color-info: var(--info);
+  --color-info-text: var(--info-text);
+  --color-info-soft: var(--info-soft);
+  --color-neutral-soft: var(--neutral-soft);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-grid: var(--chart-grid);
   --color-money-in: var(--money-in);
   --color-money-out: var(--money-out);
 
@@ -42,6 +61,8 @@
   --shadow-2: var(--shadow-2);
 
   --ease-out: var(--ease-out);
+  --default-transition-duration: var(--dur-base);
+  --default-transition-timing-function: var(--ease-out);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-satoshi), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -78,6 +99,10 @@
     font-family: var(--font-display);
   }
 
+  ::selection {
+    background: var(--primary-soft);
+  }
+
   :focus-visible {
     outline: 2px solid var(--focus-ring);
     outline-offset: 2px;
@@ -97,4 +122,21 @@
     transition-property: opacity !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Layout tokens for overlays (brief §2.4: no ad-hoc arbitrary values in components). */
+@utility max-h-dialog {
+  max-height: calc(100dvh - 2rem);
+}
+@utility w-dialog {
+  width: calc(100% - 2rem);
+}
+@utility max-h-sheet {
+  max-height: 90dvh;
+}
+@utility max-w-drawer {
+  max-width: 85vw;
+}
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
 }

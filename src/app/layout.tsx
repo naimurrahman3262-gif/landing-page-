@@ -19,7 +19,10 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#0b1020",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0c" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f7f8" },
+  ],
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -28,7 +31,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <html lang={locale} data-theme="dark" className={`${satoshi.variable} ${inter.variable}`}>
       <body className="min-h-dvh bg-bg font-sans text-text-1 antialiased">
         <NextIntlClientProvider>
-          <Providers>{children}</Providers>
+          {/* Time zone comes from the user's preferences in Phase 3; UTC until then. */}
+          <Providers timeZone="UTC">{children}</Providers>
         </NextIntlClientProvider>
       </body>
     </html>
