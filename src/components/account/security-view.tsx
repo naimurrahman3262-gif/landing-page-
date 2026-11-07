@@ -66,6 +66,34 @@ export function SecurityView() {
   );
 }
 
+/** Icon + title + body, with the action beside it from `sm` and full-width below it on phones. */
+function SettingRow({
+  icon: Icon,
+  title,
+  body,
+  action,
+}: {
+  icon: typeof KeyRound;
+  title: React.ReactNode;
+  body: React.ReactNode;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="grid gap-4 sm:flex sm:items-start">
+      <div className="flex min-w-0 flex-1 gap-4">
+        <span className="grid size-10 shrink-0 place-content-center rounded-md bg-surface-3 text-text-2">
+          <Icon aria-hidden className="size-5" />
+        </span>
+        <div className="grid min-w-0 flex-1 gap-1">
+          <CardTitle>{title}</CardTitle>
+          <div className="grid gap-1 text-sm text-text-2">{body}</div>
+        </div>
+      </div>
+      {action && <div className="grid sm:shrink-0">{action}</div>}
+    </div>
+  );
+}
+
 /* --------------------------------- 2FA --------------------------------- */
 
 function TwoFactorCard({ data }: { data: SecurityOverview }) {
@@ -86,25 +114,31 @@ function TwoFactorCard({ data }: { data: SecurityOverview }) {
   }
 
   return (
-    <Card className="flex flex-col gap-4 sm:flex-row sm:items-start">
-      <span className="grid size-10 shrink-0 place-content-center rounded-md bg-surface-3 text-text-2">
-        {on ? <ShieldCheck aria-hidden className="size-5" /> : <ShieldOff aria-hidden className="size-5" />}
-      </span>
-      <div className="grid flex-1 gap-1">
-        <div className="flex flex-wrap items-center gap-2">
-          <CardTitle>{t("twoFactor")}</CardTitle>
-          <StatusBadge status={on ? "active" : "inactive"} label={on ? t("on") : t("off")} />
-        </div>
-        <p className="text-sm text-text-2">{on ? t("twoFactorOnBody") : t("twoFactorOffBody")}</p>
-        {on && <p className="text-sm text-text-3">{t("backupLeft", { count: data.backupCodesRemaining })}</p>}
-      </div>
-      {on ? (
-        <Button variant="outline" loading={disable.isPending} onClick={() => setStepUp(true)}>
-          {t("turnOff")}
-        </Button>
-      ) : (
-        <Button onClick={() => setSetupOpen(true)}>{t("turnOn")}</Button>
-      )}
+    <Card>
+      <SettingRow
+        icon={on ? ShieldCheck : ShieldOff}
+        title={
+          <span className="flex flex-wrap items-center gap-2">
+            {t("twoFactor")}
+            <StatusBadge status={on ? "active" : "inactive"} label={on ? t("on") : t("off")} />
+          </span>
+        }
+        body={
+          <>
+            <p>{on ? t("twoFactorOnBody") : t("twoFactorOffBody")}</p>
+            {on && <p className="text-text-3">{t("backupLeft", { count: data.backupCodesRemaining })}</p>}
+          </>
+        }
+        action={
+          on ? (
+            <Button variant="outline" loading={disable.isPending} onClick={() => setStepUp(true)}>
+              {t("turnOff")}
+            </Button>
+          ) : (
+            <Button onClick={() => setSetupOpen(true)}>{t("turnOn")}</Button>
+          )
+        }
+      />
       <TwoFactorSetupDialog open={setupOpen} onOpenChange={setSetupOpen} />
       <StepUpAuthDialog
         open={stepUp}
@@ -279,22 +313,18 @@ function PasswordCard({ changedAt }: { changedAt: string | null }) {
 
   return (
     <Card className="grid gap-4">
-      <div className="flex flex-wrap items-start gap-4">
-        <span className="grid size-10 shrink-0 place-content-center rounded-md bg-surface-3 text-text-2">
-          <KeyRound aria-hidden className="size-5" />
-        </span>
-        <div className="grid flex-1 gap-1">
-          <CardTitle>{t("password")}</CardTitle>
-          <p className="text-sm text-text-2">
-            {changedAt ? t("passwordChanged", { date: fmt(changedAt, "date") }) : t("passwordNever")}
-          </p>
-        </div>
-        {!open && (
-          <Button variant="outline" onClick={() => setOpen(true)}>
-            {t("changePassword")}
-          </Button>
-        )}
-      </div>
+      <SettingRow
+        icon={KeyRound}
+        title={t("password")}
+        body={changedAt ? t("passwordChanged", { date: fmt(changedAt, "date") }) : t("passwordNever")}
+        action={
+          !open && (
+            <Button variant="outline" onClick={() => setOpen(true)}>
+              {t("changePassword")}
+            </Button>
+          )
+        }
+      />
       {open && (
         <form
           method="post"
@@ -390,20 +420,18 @@ function EmailCard() {
 
   return (
     <Card className="grid gap-4">
-      <div className="flex flex-wrap items-start gap-4">
-        <span className="grid size-10 shrink-0 place-content-center rounded-md bg-surface-3 text-text-2">
-          <Mail aria-hidden className="size-5" />
-        </span>
-        <div className="grid min-w-0 flex-1 gap-1">
-          <CardTitle>{t("email")}</CardTitle>
-          <p className="text-sm break-all text-text-2">{t("emailCurrent", { email: user.email })}</p>
-        </div>
-        {!open && (
-          <Button variant="outline" onClick={() => setOpen(true)}>
-            {t("changeEmail")}
-          </Button>
-        )}
-      </div>
+      <SettingRow
+        icon={Mail}
+        title={t("email")}
+        body={<span className="break-all">{t("emailCurrent", { email: user.email })}</span>}
+        action={
+          !open && (
+            <Button variant="outline" onClick={() => setOpen(true)}>
+              {t("changeEmail")}
+            </Button>
+          )
+        }
+      />
       {pending && (
         <p role="status" className="rounded-md bg-info-soft p-3 text-sm text-info-text">
           {t("emailPending", { email: pending })}

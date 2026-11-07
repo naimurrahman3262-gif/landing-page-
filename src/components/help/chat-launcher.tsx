@@ -41,7 +41,25 @@ export function ChatLauncher() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const endRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => endRef.current?.scrollIntoView({ block: "end" }), [messages.length]);
+  useEffect(() => {
+    // Braces matter: newer browsers return a Promise from scrollIntoView, and React would call it as a cleanup.
+    endRef.current?.scrollIntoView({ block: "end" });
+  }, [messages.length]);
+
+  // Phones: tuck the launcher away while scrolling down so it never sits on top
+  // of what's being read; it comes back on scroll up and at the end of the page.
+  const [tucked, setTucked] = useState(false);
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      const atEnd = window.innerHeight + y >= document.documentElement.scrollHeight - 8;
+      setTucked(y > last && y > 80 && !atEnd);
+      last = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -71,7 +89,10 @@ export function ChatLauncher() {
       {!hidden && !open && (
         <Button
           size="icon"
-          className="fixed right-4 bottom-4 z-30 size-14 rounded-full shadow-2 md:right-6 md:bottom-6"
+          className={cn(
+            "fixed right-4 bottom-4 z-30 size-14 rounded-full shadow-2 transition-transform motion-reduce:transition-none md:right-6 md:bottom-6 md:translate-y-0",
+            tucked && "translate-y-24",
+          )}
           aria-label={t("open")}
           onClick={() => setOpen(true)}
         >

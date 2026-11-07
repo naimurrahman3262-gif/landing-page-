@@ -30,7 +30,7 @@ export function Field({ id, label, required, hint, error, children, className }:
   const describedBy = [errorId, hintId].filter(Boolean).join(" ") || undefined;
 
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className={cn("grid content-start gap-2", className)}>
       <Label htmlFor={id}>
         {label}
         {required && (

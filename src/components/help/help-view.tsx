@@ -127,7 +127,7 @@ export function HelpView() {
           <button
             type="button"
             onClick={() => openChat(true)}
-            className="rounded-lg text-left focus-visible:outline-2 focus-visible:outline-focus-ring"
+            className="grid rounded-lg text-left focus-visible:outline-2 focus-visible:outline-focus-ring"
           >
             <ContactBody icon={MessageCircle} title={t("chat")} body={t("chatBody")} />
           </button>

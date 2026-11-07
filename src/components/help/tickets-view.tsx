@@ -4,7 +4,7 @@ import { ChevronRight, Inbox, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { parseAsBoolean, parseAsString, parseAsStringLiteral, useQueryStates } from "nuqs";
+import { parseAsString, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { useEffect, useState } from "react";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
@@ -13,7 +13,7 @@ import { StatusBadge } from "@/components/common/status-badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTickets } from "@/lib/api/queries/account";
 import { useFormatDate } from "@/lib/format-context";
 import { NewTicketDialog } from "./new-ticket-dialog";
@@ -28,7 +28,7 @@ export function TicketsView() {
   const [state, setState] = useQueryStates({
     status: parseAsStringLiteral(TABS).withDefault("all"),
     q: parseAsString.withDefault(""),
-    new: parseAsBoolean.withDefault(false),
+    new: parseAsStringLiteral(["1"] as const),
     tx: parseAsString,
     category: parseAsString,
   });
@@ -52,17 +52,18 @@ export function TicketsView() {
         subtitle={t("subtitle")}
         backHref="/help"
         actions={
-          <Button onClick={() => void setState({ new: true })}>
+          <Button onClick={() => void setState({ new: "1" })}>
             <Plus aria-hidden /> {t("new")}
           </Button>
         }
       />
 
-      <div className="grid gap-3 md:flex md:items-center md:justify-between">
-        <Tabs
-          value={state.status}
-          onValueChange={(v) => void setState({ status: v as (typeof TABS)[number] })}
-        >
+      <Tabs
+        value={state.status}
+        onValueChange={(v) => void setState({ status: v as (typeof TABS)[number] })}
+        className="grid gap-6"
+      >
+        <div className="grid gap-3 md:flex md:items-center md:justify-between">
           <TabsList className="max-w-full overflow-x-auto">
             {TABS.map((s) => (
               <TabsTrigger key={s} value={s}>
@@ -70,62 +71,68 @@ export function TicketsView() {
               </TabsTrigger>
             ))}
           </TabsList>
-        </Tabs>
-        <div className="relative md:w-72">
-          <Search
-            aria-hidden
-            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-text-3"
-          />
-          <Input
-            type="search"
-            aria-label={t("search")}
-            placeholder={t("search")}
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            size={1}
-            className="w-full pl-9"
-          />
+          <div className="relative md:w-72">
+            <Search
+              aria-hidden
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-text-3"
+            />
+            <Input
+              type="search"
+              aria-label={t("search")}
+              placeholder={t("search")}
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              size={1}
+              className="w-full pl-9"
+            />
+          </div>
         </div>
-      </div>
 
-      {q.isPending && <Skeleton className="h-60" />}
-      {q.isError && <ErrorState title={t("error")} onRetry={() => q.refetch()} retrying={q.isFetching} />}
-      {q.data?.length === 0 && (
-        <EmptyState
-          icon={Inbox}
-          title={t(`empty.${state.status}`)}
-          description={t("emptyBody")}
-          action={<Button onClick={() => void setState({ new: true })}>{t("new")}</Button>}
-        />
-      )}
-      {q.data && q.data.length > 0 && (
-        <ul className="grid divide-y divide-border rounded-lg border border-border bg-surface-1">
-          {q.data.map((tk) => (
-            <li key={tk.id}>
-              <Link
-                href={`/help/tickets/${tk.id}` as never}
-                className="flex items-center gap-3 p-4 transition-colors hover:bg-surface-2 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring"
-              >
-                <span className="grid min-w-0 flex-1 gap-1">
-                  <span className="flex flex-wrap items-center gap-2">
-                    <span className="font-medium">{tk.subject}</span>
-                  </span>
-                  <span className="text-sm text-text-3">
-                    {t("number", { number: tk.number })} · {t(`categories.${tk.category}`)} ·{" "}
-                    {t("updated", { when: fmt(tk.updatedAt, "relative") })}
-                  </span>
-                </span>
-                <StatusBadge status={tk.status} label={t(`tabs.${tk.status}`)} />
-                <ChevronRight aria-hidden className="size-4 shrink-0 text-text-3" />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+        {TABS.map((tab) => (
+          <TabsContent key={tab} value={tab} className="grid gap-6 pt-0">
+            {q.isPending && <Skeleton className="h-60" />}
+            {q.isError && (
+              <ErrorState title={t("error")} onRetry={() => q.refetch()} retrying={q.isFetching} />
+            )}
+            {q.data?.length === 0 && (
+              <EmptyState
+                icon={Inbox}
+                title={t(`empty.${state.status}`)}
+                description={t("emptyBody")}
+                action={<Button onClick={() => void setState({ new: "1" })}>{t("new")}</Button>}
+              />
+            )}
+            {q.data && q.data.length > 0 && (
+              <ul className="grid divide-y divide-border rounded-lg border border-border bg-surface-1">
+                {q.data.map((tk) => (
+                  <li key={tk.id}>
+                    <Link
+                      href={`/help/tickets/${tk.id}` as never}
+                      className="flex items-center gap-3 p-4 transition-colors hover:bg-surface-2 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring"
+                    >
+                      <span className="grid min-w-0 flex-1 gap-1">
+                        <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                          <span className="font-medium">{tk.subject}</span>
+                          <StatusBadge status={tk.status} label={t(`tabs.${tk.status}`)} />
+                        </span>
+                        <span className="text-sm text-text-3">
+                          {t("number", { number: tk.number })} · {t(`categories.${tk.category}`)} ·{" "}
+                          {t("updated", { when: fmt(tk.updatedAt, "relative") })}
+                        </span>
+                      </span>
+                      <ChevronRight aria-hidden className="size-4 shrink-0 text-text-3" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </TabsContent>
+        ))}
+      </Tabs>
 
       <NewTicketDialog
-        open={state.new}
-        onOpenChange={(o) => (o ? void setState({ new: true }) : closeDialog())}
+        open={state.new === "1"}
+        onOpenChange={(o) => (o ? void setState({ new: "1" }) : closeDialog())}
         prefill={{ tx: state.tx, category: state.category }}
         onCreated={(tk) => router.push(`/help/tickets/${tk.id}` as never)}
       />

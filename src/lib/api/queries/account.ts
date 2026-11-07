@@ -124,14 +124,12 @@ export function useChangePassword() {
 export function useChangeEmail() {
   return useMutation({
     mutationFn: async (v: { email: string; stepUpToken: string }) =>
-      z
-        .object({ pendingEmail: z.string(), sentTo: z.string() })
-        .parse(
-          await apiFetch("/security/email", {
-            body: { email: v.email },
-            headers: { "x-step-up": v.stepUpToken },
-          }),
-        ),
+      z.object({ pendingEmail: z.string(), sentTo: z.string() }).parse(
+        await apiFetch("/security/email", {
+          body: { email: v.email },
+          headers: { "x-step-up": v.stepUpToken },
+        }),
+      ),
   });
 }
 
@@ -174,14 +172,12 @@ export function useUpdatePayoutMethod() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (v: { id: string; label?: string; isDefault?: boolean }) =>
-      z
-        .object({ payoutMethod: PayoutMethod })
-        .parse(
-          await apiFetch(`/payout-methods/${v.id}`, {
-            method: "PATCH",
-            body: { label: v.label, isDefault: v.isDefault },
-          }),
-        ),
+      z.object({ payoutMethod: PayoutMethod }).parse(
+        await apiFetch(`/payout-methods/${v.id}`, {
+          method: "PATCH",
+          body: { label: v.label, isDefault: v.isDefault },
+        }),
+      ),
     onSuccess: () => qc.invalidateQueries({ queryKey: fundsKeys.payouts }),
   });
 }
