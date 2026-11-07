@@ -821,7 +821,8 @@
       "kycTitle": "Verify your identity to withdraw",
       "kycBody": "For your security, withdrawals open once your ID and proof of address are verified. It usually takes under 24 hours.",
       "kycCta": "Start verification",
-      "retryNote": "We've filled this in from your rejected withdrawal. Fix the highlighted part, then continue."
+      "retryNote": "We've filled this in from your rejected withdrawal. Fix the highlighted part, then continue.",
+      "default": "Default"
     },
     "payout": {
       "title": "Add payout method",
@@ -859,7 +860,8 @@
       "otherClient": "Sending to another client is coming soon.",
       "chooseTo": "Choose an account to transfer to",
       "toExcludes": "The source account isn't listed.",
-      "nothingToMove": "Choose an account with money in it."
+      "nothingToMove": "Choose an account with money in it.",
+      "after": "{account} after transfer"
     },
     "tx": {
       "title": "Transactions",

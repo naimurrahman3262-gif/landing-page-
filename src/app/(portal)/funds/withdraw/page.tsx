@@ -1,11 +1,8 @@
-import { getTranslations } from "next-intl/server";
-import { RouteStub } from "@/components/shell/coming-soon";
+import { WithdrawFlow } from "@/components/funds/withdraw-flow";
 import { navMetadata } from "@/lib/page";
 
 export const generateMetadata = () => navMetadata("withdraw");
 
-/** Stub: the screen for this route is built in a later phase. */
-export default async function Page() {
-  const t = await getTranslations("nav");
-  return <RouteStub title={t("withdraw")} />;
+export default function WithdrawPage() {
+  return <WithdrawFlow />;
 }
