@@ -60,6 +60,8 @@ export function forwardHeaders(req: NextRequest): Record<string, string> {
   const out: Record<string, string> = {};
   const idem = req.headers.get("idempotency-key");
   if (idem) out["Idempotency-Key"] = idem;
+  const stepUp = req.headers.get("x-step-up");
+  if (stepUp) out["x-step-up"] = stepUp;
   const mockError = req.headers.get("x-mock-error");
   if (mockError && process.env.NEXT_PUBLIC_API_MOCKING === "enabled") out["x-mock-error"] = mockError;
   const country = req.headers.get("x-vercel-ip-country");

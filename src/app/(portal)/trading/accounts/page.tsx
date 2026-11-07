@@ -1,11 +1,11 @@
-import { getTranslations } from "next-intl/server";
-import { RouteStub } from "@/components/shell/coming-soon";
+import { cookies } from "next/headers";
+import { AccountsView, VIEW_COOKIE } from "@/components/trading/accounts-view";
 import { navMetadata } from "@/lib/page";
 
 export const generateMetadata = () => navMetadata("accounts");
 
-/** Stub: the screen for this route is built in a later phase. */
-export default async function Page() {
-  const t = await getTranslations("nav");
-  return <RouteStub title={t("accounts")} />;
+export default async function AccountsPage() {
+  // Grid/table choice is remembered in a cookie, so the server renders the right view.
+  const view = (await cookies()).get(VIEW_COOKIE)?.value === "table" ? "table" : "grid";
+  return <AccountsView initialView={view} />;
 }

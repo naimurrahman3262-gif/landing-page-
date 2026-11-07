@@ -118,3 +118,233 @@ export const ApiErrorBody = z.object({
   fields: z.record(z.string(), z.string()).optional(),
 });
 export type ApiErrorBody = z.infer<typeof ApiErrorBody>;
+
+/* ------------------------------ trading ------------------------------- */
+
+export const AccountTypeId = z.enum(["standard", "pro", "cent"]);
+export const AccountStatus = z.enum(["active", "inactive", "disabled", "readOnly"]);
+
+export const Account = z.object({
+  login: z.number().int(),
+  label: z.string().max(40).nullable(),
+  kind: z.enum(["live", "demo"]),
+  type: AccountTypeId,
+  status: AccountStatus,
+  archived: z.boolean(),
+  /** "USD" or "USC" (cent account: every money field is in cents). */
+  currency: z.string(),
+  balance: z.number(),
+  credit: z.number(),
+  equity: z.number(),
+  margin: z.number(),
+  freeMargin: z.number(),
+  /** Percentage points; null when no margin is used. */
+  marginLevel: z.number().nullable(),
+  leverage: z.number().int(),
+  server: z.string(),
+  openPositions: z.number().int(),
+  createdAt: z.string(),
+  campaign: z.object({ name: z.string(), endedAt: z.string().nullable() }).nullable(),
+});
+export type Account = z.infer<typeof Account>;
+
+export const AccountList = z.object({ items: z.array(Account), syncedAt: z.string() });
+export type AccountList = z.infer<typeof AccountList>;
+
+export const AccountType = z.object({
+  id: AccountTypeId,
+  name: z.string(),
+  /** In USD. Same figure the Deposit page uses. */
+  minDeposit: z.number(),
+  spreadFrom: z.number(),
+  /** USD per lot per side; null = no commission. */
+  commissionPerLot: z.number().nullable(),
+  maxLeverage: z.number().int(),
+  leverageOptions: z.array(z.number().int()),
+  currencies: z.array(z.string()),
+  demoBalances: z.array(z.number()),
+});
+export type AccountType = z.infer<typeof AccountType>;
+
+export const RenameAccountInput = z.object({ label: z.string().trim().max(40, "labelTooLong") });
+export const ChangeLeverageInput = z.object({
+  leverage: z.number().int().positive(),
+  acceptTerms: z.literal(true),
+});
+export const ChangeMt5PasswordInput = z.object({
+  type: z.enum(["master", "investor"]),
+  password,
+});
+export const OpenAccountInput = z.object({
+  kind: z.enum(["live", "demo"]),
+  type: AccountTypeId,
+  leverage: z.number().int().positive(),
+  currency: z.string(),
+  label: z.string().trim().max(40, "labelTooLong").optional(),
+  demoBalance: z.number().positive().optional(),
+});
+export type OpenAccountInput = z.infer<typeof OpenAccountInput>;
+
+export const OpenAccountResult = z.object({
+  account: Account,
+  credentials: z.object({
+    login: z.number(),
+    server: z.string(),
+    masterPassword: z.string(),
+    investorPassword: z.string(),
+  }),
+});
+
+export const LeverageOptions = z.object({
+  current: z.number().int(),
+  options: z.array(z.number().int()),
+  openPositions: z.number().int(),
+});
+
+export const StepUpStart = z.object({ method: z.enum(["totp", "email"]), sentTo: z.string().nullable() });
+export const StepUpResult = z.object({ stepUpToken: z.string(), expiresInSeconds: z.number() });
+
+export const Position = z.object({
+  ticket: z.number().int(),
+  login: z.number().int(),
+  symbol: z.string(),
+  side: z.enum(["buy", "sell"]),
+  volume: z.number(),
+  openPrice: z.number(),
+  openTime: z.string(),
+  currentPrice: z.number(),
+  sl: z.number().nullable(),
+  tp: z.number().nullable(),
+  swap: z.number(),
+  commission: z.number(),
+  profit: z.number(),
+  digits: z.number().int(),
+});
+export type Position = z.infer<typeof Position>;
+
+export const PendingOrder = z.object({
+  ticket: z.number().int(),
+  login: z.number().int(),
+  symbol: z.string(),
+  type: z.enum(["buyLimit", "sellLimit", "buyStop", "sellStop"]),
+  volume: z.number(),
+  price: z.number(),
+  currentPrice: z.number(),
+  sl: z.number().nullable(),
+  tp: z.number().nullable(),
+  createdAt: z.string(),
+  digits: z.number().int(),
+});
+export type PendingOrder = z.infer<typeof PendingOrder>;
+
+export const Deal = z.object({
+  ticket: z.number().int(),
+  login: z.number().int(),
+  symbol: z.string(),
+  side: z.enum(["buy", "sell"]),
+  volume: z.number(),
+  openPrice: z.number(),
+  openTime: z.string(),
+  closePrice: z.number(),
+  closeTime: z.string(),
+  sl: z.number().nullable(),
+  tp: z.number().nullable(),
+  swap: z.number(),
+  commission: z.number(),
+  profit: z.number(),
+  digits: z.number().int(),
+});
+export type Deal = z.infer<typeof Deal>;
+
+export const TradingSummary = z.object({
+  login: z.number().int(),
+  currency: z.string(),
+  equity: z.number(),
+  balance: z.number(),
+  credit: z.number(),
+  margin: z.number(),
+  freeMargin: z.number(),
+  marginLevel: z.number().nullable(),
+  /** Net of swap and commission, for closed deals in the period. */
+  realizedPnl: z.number(),
+  closedTrades: z.number().int(),
+  openPnl: z.number(),
+  syncedAt: z.string(),
+  series: z.array(
+    z.object({ date: z.string(), equity: z.number(), realizedCumulative: z.number(), volume: z.number() }),
+  ),
+});
+export type TradingSummary = z.infer<typeof TradingSummary>;
+
+/* ----------------------------- portfolio ------------------------------ */
+
+export const PortfolioSummary = z.object({
+  /** All in USD (cent accounts converted). Live, non-archived accounts only. */
+  totalEquity: z.number(),
+  totalBalance: z.number(),
+  openPnl: z.number(),
+  walletBalance: z.number(),
+  syncedAt: z.string(),
+});
+export type PortfolioSummary = z.infer<typeof PortfolioSummary>;
+
+export const Alert = z.object({
+  id: z.string(),
+  kind: z.enum(["kycPending", "kycRejected", "withdrawalRejected", "campaignEnding", "documentExpiring"]),
+  severity: z.enum(["danger", "warning", "info"]),
+  title: z.string(),
+  body: z.string(),
+  action: z.object({ label: z.string(), href: z.string() }).nullable(),
+});
+export type Alert = z.infer<typeof Alert>;
+
+export const OnboardingStep = z.object({
+  id: z.enum(["verifyEmail", "completeProfile", "verifyIdentity", "firstDeposit", "downloadPlatform"]),
+  done: z.boolean(),
+});
+export const Onboarding = z.object({ steps: z.array(OnboardingStep) });
+export type Onboarding = z.infer<typeof Onboarding>;
+
+/* ----------------------------- transactions --------------------------- */
+
+export const TransactionStatus = z.enum([
+  "pending",
+  "processing",
+  "approved",
+  "rejected",
+  "cancelled",
+  "failed",
+]);
+export const TransactionType = z.enum(["deposit", "withdrawal", "transfer"]);
+export const AccountRef = z.union([
+  z.object({ kind: z.literal("wallet") }),
+  z.object({ kind: z.literal("mt5"), login: z.number().int() }),
+]);
+export type AccountRef = z.infer<typeof AccountRef>;
+
+export const Transaction = z.object({
+  id: z.string(),
+  reference: z.string(),
+  type: TransactionType,
+  status: TransactionStatus,
+  /** Always positive; direction comes from `type`. */
+  amount: z.number().nonnegative(),
+  fee: z.number().nonnegative(),
+  currency: z.string(),
+  method: z.string().nullable(),
+  /** Deposit → destination; withdrawal → source; transfer → source. */
+  account: AccountRef,
+  /** Transfers only. */
+  counterparty: AccountRef.nullable(),
+  reason: z.string().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export type Transaction = z.infer<typeof Transaction>;
+
+export const TransactionPage = z.object({
+  items: z.array(Transaction),
+  total: z.number().int(),
+  page: z.number().int(),
+  pageSize: z.number().int(),
+});

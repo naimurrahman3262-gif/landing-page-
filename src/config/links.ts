@@ -9,5 +9,8 @@ export const LINKS = {
   partnerPortal: null as string | null,
   appStore: null as string | null,
   googlePlay: null as string | null,
+  leverageTerms: null as string | null,
+  /** MT5 web terminal; until supplied, "Trade" opens Platforms. */
+  webTerminal: null as string | null,
   /** MT5 download URLs arrive with /trading/platforms (Phase 4). */
 };
