@@ -131,11 +131,11 @@ export function AccountCard({ account, compact = false }: { account: Account; co
         <MoneyText amount={account.equity} currency={account.currency} size="lg" />
       </div>
 
-      <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
         {stats.map(([label, value]) => (
-          <div key={label} className="flex min-w-0 justify-between gap-2">
-            <dt className="text-text-3">{label}</dt>
-            <dd className="truncate font-display tabular">{value}</dd>
+          <div key={label} className="grid min-w-0 gap-0.5">
+            <dt className="text-xs text-text-3">{label}</dt>
+            <dd className="font-display font-medium break-words tabular">{value}</dd>
           </div>
         ))}
       </dl>

@@ -63,7 +63,7 @@ export function EmailCodeLogin({ next }: { next: string }) {
       <>
         <AuthHeading title={t("emailCode.heading")} subtitle={t("emailCode.body")} />
         <FormAlert>{error}</FormAlert>
-        <form noValidate onSubmit={form.handleSubmit(send)} className="grid gap-4">
+        <form method="post" noValidate onSubmit={form.handleSubmit(send)} className="grid gap-4">
           <Field id="ec-email" label={t("login.email")} error={vt(form.formState.errors.email?.message)}>
             {(a) => <Input type="email" autoComplete="email" autoFocus {...a} {...form.register("email")} />}
           </Field>
@@ -80,6 +80,7 @@ export function EmailCodeLogin({ next }: { next: string }) {
       <AuthHeading title={t("emailCode.heading")} subtitle={t("emailCode.sentTo", { email: sent.sentTo })} />
       <FormAlert>{error}</FormAlert>
       <form
+        method="post"
         noValidate
         onSubmit={(e) => {
           e.preventDefault();

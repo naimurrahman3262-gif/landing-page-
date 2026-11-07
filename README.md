@@ -10,7 +10,7 @@ cp .env.example .env.local   # optional — .env.development already enables moc
 pnpm dev                     # http://localhost:3000
 ```
 
-With `NEXT_PUBLIC_API_MOCKING=enabled`, BFF route handlers (`src/app/api/*`) call `BACKEND_URL`, which MSW intercepts (`src/mocks`). Append `?mockError=<domain>` to force an error from a mocked domain.
+With `NEXT_PUBLIC_API_MOCKING=enabled`, BFF route handlers (`src/app/api/*`) send backend calls straight to the MSW handlers in `src/mocks` (no network, survives hot reloads). Append `?mockError=<domain>` to force an error from a mocked domain.
 
 ## Mock sign-in
 

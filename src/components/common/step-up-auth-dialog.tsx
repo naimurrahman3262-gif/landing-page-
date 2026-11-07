@@ -67,6 +67,7 @@ export function StepUpAuthDialog({ open, onOpenChange, action, onVerified }: Ste
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <form
+          method="post"
           noValidate
           className="flex min-h-0 flex-col"
           onSubmit={(e) => {
@@ -96,7 +97,6 @@ export function StepUpAuthDialog({ open, onOpenChange, action, onVerified }: Ste
               onChange={setCode}
               onComplete={submit}
               invalid={!!error}
-              disabled={!method}
               autoFocus
             />
             {method === "totp" && (

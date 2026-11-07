@@ -6,6 +6,7 @@ export const RESET_COOKIE = "wpx_reset";
 export const THEME_COOKIE = "wpx_theme";
 export const LOCALE_COOKIE = "NEXT_LOCALE";
 export const NAV_COOKIE = "wpx_nav";
+export const ACCOUNTS_VIEW_COOKIE = "wpx_accounts_view";
 
 /** Routes rendered without the app shell; reachable without a full session. */
 export const AUTH_ROUTES = [

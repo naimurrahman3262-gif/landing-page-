@@ -131,7 +131,10 @@
     "backHome": "Back to Home",
     "buildingTitle": "This page is being built",
     "buildingBody": "It's part of a later build phase.",
-    "sessionExpired": "Your session ended. Sign in again to continue."
+    "sessionExpired": "Your session ended. Sign in again to continue.",
+    "unavailableTitle": "We can't reach our servers right now",
+    "unavailableBody": "Your account and funds are safe. This is usually brief. Reload in a moment, or sign out and back in.",
+    "reload": "Reload"
   },
   "footer": {
     "legal": "Legal",
@@ -395,22 +398,6 @@
     "freeMargin": "Free margin",
     "margin": "Margin",
     "marginLevel": "Margin level",
-    "leverage": {
-      "title": "Change leverage",
-      "current": "Current leverage",
-      "new": "New leverage",
-      "choose": "Choose new leverage",
-      "risk": "Higher leverage means bigger gains and losses from smaller price moves, and a margin call sooner. Only choose what you can manage.",
-      "blocked": "You have {count, plural, one {# open position} other {# open positions}} on this account. Close them before changing leverage.",
-      "viewPositions": "View positions",
-      "terms": "I understand how leverage affects my risk and accept the leverage terms.",
-      "termsLink": "Read the leverage terms",
-      "submit": "Change to {leverage}",
-      "submitIdle": "Change leverage",
-      "success": "Leverage changed to {leverage}",
-      "loadError": "We couldn't load leverage options",
-      "stepUpAction": "change leverage"
-    },
     "currency": "Currency",
     "server": "Server",
     "login": "Login",
@@ -459,7 +446,29 @@
       "submit": "Save label",
       "success": "Label saved"
     },
-    "password": {
+    "archive": {
+      "title": "Archive {account}?",
+      "body": "It moves to the Archived tab. You can still see its history. Only accounts with zero equity and no open positions can be archived.",
+      "submit": "Archive account",
+      "success": "Account archived"
+    },
+    "leverageDialog": {
+      "title": "Change leverage",
+      "current": "Current leverage",
+      "new": "New leverage",
+      "choose": "Choose new leverage",
+      "risk": "Higher leverage means bigger gains and losses from smaller price moves, and a margin call sooner. Only choose what you can manage.",
+      "blocked": "You have {count, plural, one {# open position} other {# open positions}} on this account. Close them before changing leverage.",
+      "viewPositions": "View positions",
+      "terms": "I understand how leverage affects my risk and accept the leverage terms.",
+      "termsLink": "Read the leverage terms",
+      "submit": "Change to {leverage}",
+      "submitIdle": "Change leverage",
+      "success": "Leverage changed to {leverage}",
+      "loadError": "We couldn't load leverage options",
+      "stepUpAction": "change leverage"
+    },
+    "passwordDialog": {
       "title": "Change MT5 password",
       "body": "For {account}. The new password works in MT5 straight away.",
       "type": "Password type",
@@ -473,12 +482,7 @@
       "success": "{type} password changed",
       "stepUpAction": "change your MT5 password"
     },
-    "archive": {
-      "title": "Archive {account}?",
-      "body": "It moves to the Archived tab. You can still see its history. Only accounts with zero equity and no open positions can be archived.",
-      "submit": "Archive account",
-      "success": "Account archived"
-    }
+    "leverage": "Leverage"
   },
   "accountDetails": {
     "subtitle": "{type} · {server}",

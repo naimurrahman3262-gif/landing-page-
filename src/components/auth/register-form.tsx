@@ -85,7 +85,7 @@ export function RegisterForm({ detectedCountry, referral }: { detectedCountry?: 
       <Divider label={tc("or")} />
 
       <FormAlert>{formError}</FormAlert>
-      <form noValidate onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+      <form method="post" noValidate onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <Field id="reg-first" label={t("firstName")} required error={vt(errors.firstName?.message)}>
             {(a) => <Input autoComplete="given-name" {...a} {...form.register("firstName")} />}

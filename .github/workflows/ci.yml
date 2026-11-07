@@ -23,6 +23,8 @@ jobs:
       - run: pnpm build
         env:
           NEXT_PUBLIC_API_MOCKING: enabled
+          # e2e also covers the /dev/components style guide (404 in real production builds).
+          NEXT_PUBLIC_STYLEGUIDE: enabled
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e
         env:

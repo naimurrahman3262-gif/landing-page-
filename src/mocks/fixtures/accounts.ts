@@ -192,7 +192,8 @@ export function seedAccounts(positions: Position[]): Account[] {
         label: "Diwali bonus",
         status: "readOnly",
         balance: 52,
-        campaign: { name: "Diwali trading contest", endedAt: "2026-10-24T18:29:59Z" },
+        // 23:59:59 on 24 Oct in the persona's zone (Asia/Dhaka, GMT+6).
+        campaign: { name: "Diwali trading contest", endedAt: "2026-10-24T17:59:59Z" },
         createdAt: "2026-10-01T06:00:00Z",
       },
       positions,

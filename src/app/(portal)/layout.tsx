@@ -2,6 +2,7 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { AppShell } from "@/components/shell/app-shell";
+import { BackendUnavailable } from "@/components/shell/backend-unavailable";
 import { Footer } from "@/components/shell/footer";
 import { NAV_COOKIE, THEME_COOKIE } from "@/lib/auth/constants";
 import { getCurrentUser } from "@/lib/bff/server";
@@ -14,6 +15,7 @@ export default async function PortalLayout({ children }: { children: ReactNode }
   const path = (await headers()).get("x-pathname") ?? "/";
   if (current === "expired") redirect(`/api/auth/session-expired?next=${encodeURIComponent(path)}` as never);
   if (!current) redirect(`/login?next=${encodeURIComponent(path)}`);
+  if (current === "unavailable") return <BackendUnavailable />;
 
   const jar = await cookies();
   const expanded = decodeURIComponent(jar.get(NAV_COOKIE)?.value ?? "")

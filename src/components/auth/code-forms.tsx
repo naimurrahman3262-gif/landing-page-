@@ -87,6 +87,7 @@ export function VerifyEmailForm({ email: initialEmail }: { email: string | null 
       {notice && !c.error && <FormAlert tone="success">{notice}</FormAlert>}
       <FormAlert>{c.error}</FormAlert>
       <form
+        method="post"
         noValidate
         onSubmit={(e) => {
           e.preventDefault();
@@ -158,7 +159,12 @@ function ChangeEmailDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
-        <form noValidate onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-col">
+        <form
+          method="post"
+          noValidate
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex min-h-0 flex-col"
+        >
           <DialogHeader>
             <DialogTitle>{t("changeTitle")}</DialogTitle>
             <DialogDescription>{t("changeBody")}</DialogDescription>
@@ -224,6 +230,7 @@ export function TwoFactorForm({ next }: { next: string }) {
       />
       <FormAlert>{c.error}</FormAlert>
       <form
+        method="post"
         noValidate
         onSubmit={(e) => {
           e.preventDefault();
@@ -296,7 +303,7 @@ export function ForgotPasswordForm() {
     <>
       <AuthHeading title={t("heading")} subtitle={t("body")} />
       <FormAlert>{error}</FormAlert>
-      <form noValidate onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+      <form method="post" noValidate onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
         <Field id="forgot-email" label={t("email")} error={vt(form.formState.errors.email?.message)}>
           {(a) => <Input type="email" autoComplete="email" autoFocus {...a} {...form.register("email")} />}
         </Field>
@@ -361,7 +368,7 @@ export function ResetPasswordForm() {
           )}
         </FormAlert>
       )}
-      <form noValidate onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+      <form method="post" noValidate onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
         <Field id="reset-code" label={t("code")} error={vt(errors.code?.message)}>
           {(a) => (
             <Controller

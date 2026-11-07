@@ -28,15 +28,20 @@ export function QrLogin({ next }: { next: string }) {
   const redirectRef = useRef(redirect);
   redirectRef.current = redirect;
 
+  // Only the latest request may set the code: an older response arriving late
+  // would otherwise replace the code the user just scanned.
+  const latest = useRef(0);
   const start = useCallback(async () => {
+    const id = ++latest.current;
     setFailed(false);
     setQr(null);
     try {
       const res = await apiFetch<QrStart>("/auth/qr/start", { method: "POST" });
+      if (id !== latest.current) return;
       setQr(res);
       restart(res.expiresInSeconds);
     } catch {
-      setFailed(true);
+      if (id === latest.current) setFailed(true);
     }
   }, [restart]);
 

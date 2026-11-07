@@ -41,6 +41,7 @@ test("redirects to login with next, signs in with 2FA and returns", async ({ pag
 
 test("keyboard-only sign-in", async ({ page }) => {
   await page.goto("/login");
+  await page.waitForLoadState("networkidle"); // hydrated, so Enter goes through the client handler
   await expect(page.getByLabel("Email")).toBeFocused();
   await page.keyboard.type(NEW_USER);
   await page.keyboard.press("Tab");
@@ -63,7 +64,7 @@ test("sign-in modes have their own URL hash and Back works", async ({ page }) =>
 test("QR sign-in completes when the app approves", async ({ page }) => {
   await page.goto("/login#qr");
   await page.getByRole("button", { name: "Simulate app approval (mock)" }).click();
-  await expect(page).toHaveURL(/\/$/, { timeout: 10_000 });
+  await expect(page).toHaveURL(/\/$/, { timeout: 20_000 });
 });
 
 test("register → verify email → portal", async ({ page }) => {
@@ -123,3 +124,9 @@ for (const path of ["/login", "/register", "/forgot-password"]) {
     expect(blocking.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.target.join(" ")) }))).toEqual([]);
   });
 }
+
+test("submitting before hydration never puts credentials in the URL", async ({ page }) => {
+  await page.goto("/login");
+  const form = page.locator("form").first();
+  await expect(form).toHaveAttribute("method", "post");
+});

@@ -146,7 +146,7 @@ function PasswordLogin({ next }: { next: string }) {
   }
 
   return (
-    <form noValidate onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+    <form method="post" noValidate onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
       <FormAlert>{formError}</FormAlert>
       <Field id="login-email" label={t("login.email")} error={vt(errors.email?.message)}>
         {(a) => <Input type="email" autoComplete="username" autoFocus {...a} {...form.register("email")} />}

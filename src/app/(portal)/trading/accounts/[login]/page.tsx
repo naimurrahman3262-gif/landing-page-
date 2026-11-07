@@ -1,11 +1,13 @@
-import { getTranslations } from "next-intl/server";
-import { RouteStub } from "@/components/shell/coming-soon";
+import { notFound } from "next/navigation";
+import { AccountDetailsView } from "@/components/trading/account-details-view";
 import { navMetadata } from "@/lib/page";
 
 export const generateMetadata = () => navMetadata("details");
 
-/** Stub: the screen for this route is built in a later phase. */
-export default async function Page() {
-  const t = await getTranslations("nav");
-  return <RouteStub title={t("details")} backHref="/trading/accounts" />;
+type Props = { params: Promise<{ login: string }> };
+
+export default async function AccountDetailsPage({ params }: Props) {
+  const { login } = await params;
+  if (!/^\d{1,12}$/.test(login)) notFound();
+  return <AccountDetailsView login={Number(login)} />;
 }

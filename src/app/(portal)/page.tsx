@@ -1,11 +1,8 @@
-import { getTranslations } from "next-intl/server";
-import { RouteStub } from "@/components/shell/coming-soon";
+import { HomeView } from "@/components/home/home-view";
 import { navMetadata } from "@/lib/page";
 
 export const generateMetadata = () => navMetadata("home");
 
-/** Stub: the screen for this route is built in a later phase. */
-export default async function Page() {
-  const t = await getTranslations("nav");
-  return <RouteStub title={t("home")} />;
+export default function HomePage() {
+  return <HomeView />;
 }

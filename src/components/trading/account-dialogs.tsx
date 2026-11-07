@@ -75,6 +75,7 @@ export function RenameDialog({ account, open, onOpenChange }: DialogProps) {
     >
       <DialogContent className="max-w-md">
         <form
+          method="post"
           noValidate
           className="flex min-h-0 flex-col"
           onSubmit={(e) => {
@@ -122,7 +123,7 @@ export function RenameDialog({ account, open, onOpenChange }: DialogProps) {
 /* ------------------------------- leverage ------------------------------ */
 
 export function LeverageDialog({ account, open, onOpenChange }: DialogProps) {
-  const t = useTranslations("accounts.leverage");
+  const t = useTranslations("accounts.leverageDialog");
   const tc = useTranslations("common");
   const apiError = useApiErrorMessage();
   const options = useLeverageOptions(account.login, open);
@@ -271,7 +272,7 @@ export function Mt5PasswordDialog({
   onOpenChange,
   initialType = "master",
 }: DialogProps & { initialType?: "master" | "investor" }) {
-  const t = useTranslations("accounts.password");
+  const t = useTranslations("accounts.passwordDialog");
   const tc = useTranslations("common");
   const vt = useValidationMessage();
   const apiError = useApiErrorMessage();
@@ -315,6 +316,7 @@ export function Mt5PasswordDialog({
       <Dialog open={open && !stepUp} onOpenChange={reset}>
         <DialogContent>
           <form
+            method="post"
             noValidate
             className="flex min-h-0 flex-col"
             onSubmit={(e) => {

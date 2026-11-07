@@ -18,6 +18,19 @@ import {
 
 export const BACKEND_URL = process.env.BACKEND_URL ?? "https://backend.mock.winprofx.local";
 const IS_PROD = process.env.NODE_ENV === "production";
+const MOCKING = process.env.NEXT_PUBLIC_API_MOCKING === "enabled";
+
+/**
+ * Mock mode: hand the request straight to the MSW handlers instead of relying
+ * on MSW patching global fetch (that patch is lost on dev hot reloads). Same
+ * handlers, same responses, deterministic in dev and on Vercel previews.
+ */
+async function mockFetch(url: string, init: RequestInit): Promise<Response> {
+  const [{ getResponse }, { handlers }] = await Promise.all([import("msw"), import("@/mocks/handlers")]);
+  const res = await getResponse(handlers, new Request(url, init));
+  if (!res) throw new Error(`No mock handler for ${init.method ?? "GET"} ${url}`);
+  return res;
+}
 
 export interface BackendResponse<T = unknown> {
   status: number;
@@ -30,7 +43,8 @@ export async function backend<T = unknown>(
   init: { method?: string; body?: unknown; token?: string; headers?: Record<string, string> } = {},
 ): Promise<BackendResponse<T>> {
   try {
-    const res = await fetch(`${BACKEND_URL}${path}`, {
+    const url = `${BACKEND_URL}${path}`;
+    const requestInit: RequestInit = {
       method: init.method ?? "GET",
       cache: "no-store",
       headers: {
@@ -40,7 +54,8 @@ export async function backend<T = unknown>(
         ...init.headers,
       },
       body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
-    });
+    };
+    const res = MOCKING ? await mockFetch(url, requestInit) : await fetch(url, requestInit);
     const body = (await res.json().catch(() => ({}))) as T;
     return { status: res.status, ok: res.ok, body };
   } catch {
@@ -132,11 +147,19 @@ export function checkCsrf(req: NextRequest): NextResponse | null {
 }
 
 /** For server components: the signed-in user, or null (no session / expired at backend). */
-export async function getCurrentUser(): Promise<{ user: User; session: SessionPayload } | "expired" | null> {
+/**
+ * For server components. "expired": the backend no longer knows this session.
+ * "unavailable": the backend couldn't answer. That must NOT be treated as
+ * signed-out, or middleware (which still sees a valid cookie) and the layout
+ * would redirect each other forever.
+ */
+export async function getCurrentUser(): Promise<
+  { user: User; session: SessionPayload } | "expired" | "unavailable" | null
+> {
   const session = await readSession();
   if (!session) return null;
   const res = await backend<User>("/me", { token: session.token });
   if (res.status === 401) return "expired";
-  if (!res.ok) return null;
+  if (!res.ok) return "unavailable";
   return { user: res.body, session };
 }

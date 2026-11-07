@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function VerifyEmailPage() {
   const current = await getCurrentUser();
-  const email = current && current !== "expired" ? current.user.email : null;
+  const email = current && typeof current === "object" ? current.user.email : null;
   return (
     <AuthCard>
       <VerifyEmailForm email={email} />

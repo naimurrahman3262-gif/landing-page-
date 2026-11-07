@@ -19,7 +19,8 @@ import { Input } from "@/components/ui/input";
 import { SegmentedControl, SegmentedControlItem } from "@/components/ui/segmented-control";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ACCOUNTS_VIEW_COOKIE as VIEW_COOKIE } from "@/lib/auth/constants";
 import { accountName, filterAccounts, sortAccounts, type AccountSort } from "@/lib/accounts";
 import { useAccounts } from "@/lib/api/queries/accounts";
 import type { Account } from "@/lib/api/schemas";
@@ -30,7 +31,6 @@ import { AccountMenu } from "./account-menu";
 
 const TABS = ["live", "demo", "archived"] as const;
 const SORTS = ["equityDesc", "equityAsc", "newest", "login"] as const;
-export const VIEW_COOKIE = "wpx_accounts_view";
 const COUNT_KEY = "wpx:accounts-count";
 
 /** G20: skeleton count = last known count, so nothing jumps when data lands. */
@@ -232,116 +232,117 @@ export function AccountsView({ initialView }: { initialView: "grid" | "table" })
             </TabsTrigger>
           ))}
         </TabsList>
-      </Tabs>
+        <TabsContent value={tab} className="pt-0">
+          <div className="my-4 flex flex-col gap-2 md:flex-row md:items-center">
+            <div className="relative md:max-w-xs md:flex-1">
+              <Search
+                aria-hidden
+                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-text-3"
+              />
+              <Input
+                type="search"
+                aria-label={t("search")}
+                placeholder={t("search")}
+                value={q}
+                onChange={(e) => void setQ(e.target.value || null)}
+                className="pl-9"
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Select value={type} onValueChange={(v) => void setType(v === "all" ? null : v)}>
+                <SelectTrigger aria-label={t("filterType")} className="w-auto min-w-36">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t("allTypes")}</SelectItem>
+                  {(["standard", "pro", "cent"] as const).map((k) => (
+                    <SelectItem key={k} value={k}>
+                      {t(`types.${k}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
+                value={sort}
+                onValueChange={(v) => void setSort(v === "equityDesc" ? null : (v as AccountSort))}
+              >
+                <SelectTrigger aria-label={t("sort")} className="w-auto min-w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {SORTS.map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {t(`sortOptions.${s}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <SegmentedControl
+                value={view}
+                onValueChange={changeView}
+                aria-label={t("view")}
+                className="md:ml-auto"
+              >
+                <SegmentedControlItem value="grid" aria-label={t("grid")}>
+                  <LayoutGrid aria-hidden />
+                </SegmentedControlItem>
+                <SegmentedControlItem value="table" aria-label={t("table")}>
+                  <List aria-hidden />
+                </SegmentedControlItem>
+              </SegmentedControl>
+            </div>
+          </div>
 
-      <div className="my-4 flex flex-col gap-2 md:flex-row md:items-center">
-        <div className="relative md:max-w-xs md:flex-1">
-          <Search
-            aria-hidden
-            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-text-3"
-          />
-          <Input
-            type="search"
-            aria-label={t("search")}
-            placeholder={t("search")}
-            value={q}
-            onChange={(e) => void setQ(e.target.value || null)}
-            className="pl-9"
-          />
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Select value={type} onValueChange={(v) => void setType(v === "all" ? null : v)}>
-            <SelectTrigger aria-label={t("filterType")} className="w-auto min-w-36">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t("allTypes")}</SelectItem>
-              {(["standard", "pro", "cent"] as const).map((k) => (
-                <SelectItem key={k} value={k}>
-                  {t(`types.${k}`)}
-                </SelectItem>
+          {query.isPending && (
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-busy>
+              {Array.from({ length: skeletons }, (_, i) => (
+                <Card key={i} padding="sm" className="grid gap-4">
+                  <Skeleton className="h-5 w-1/2" />
+                  <Skeleton className="h-6 w-1/3" />
+                  <Skeleton className="h-8 w-2/3" />
+                  <Skeleton className="h-16" />
+                  <Skeleton className="h-9 w-3/4" />
+                </Card>
               ))}
-            </SelectContent>
-          </Select>
-          <Select
-            value={sort}
-            onValueChange={(v) => void setSort(v === "equityDesc" ? null : (v as AccountSort))}
-          >
-            <SelectTrigger aria-label={t("sort")} className="w-auto min-w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {SORTS.map((s) => (
-                <SelectItem key={s} value={s}>
-                  {t(`sortOptions.${s}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <SegmentedControl
-            value={view}
-            onValueChange={changeView}
-            aria-label={t("view")}
-            className="md:ml-auto"
-          >
-            <SegmentedControlItem value="grid" aria-label={t("grid")}>
-              <LayoutGrid aria-hidden />
-            </SegmentedControlItem>
-            <SegmentedControlItem value="table" aria-label={t("table")}>
-              <List aria-hidden />
-            </SegmentedControlItem>
-          </SegmentedControl>
-        </div>
-      </div>
-
-      {query.isPending && (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-busy>
-          {Array.from({ length: skeletons }, (_, i) => (
-            <Card key={i} padding="sm" className="grid gap-4">
-              <Skeleton className="h-5 w-1/2" />
-              <Skeleton className="h-6 w-1/3" />
-              <Skeleton className="h-8 w-2/3" />
-              <Skeleton className="h-16" />
-              <Skeleton className="h-9 w-3/4" />
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {query.isError && (
-        <ErrorState title={t("error")} onRetry={() => query.refetch()} retrying={query.isFetching} />
-      )}
-
-      {query.data && (
-        <>
-          <p className="sr-only" aria-live="polite">
-            {t("count", { count: visible.length })}
-          </p>
-          {view === "grid" ? (
-            visible.length === 0 ? (
-              empty
-            ) : (
-              <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {visible.map((a) => (
-                  <li key={a.login} className="flex">
-                    <AccountCard account={a} />
-                  </li>
-                ))}
-              </ul>
-            )
-          ) : (
-            <DataTable
-              data={visible}
-              columns={columns}
-              caption={t("title")}
-              getRowId={(a) => String(a.login)}
-              csvName={`winprofx-accounts-${tab}`}
-              empty={empty}
-              onRowClick={(a) => router.push(`/trading/accounts/${a.login}`)}
-            />
+            </div>
           )}
-        </>
-      )}
+
+          {query.isError && (
+            <ErrorState title={t("error")} onRetry={() => query.refetch()} retrying={query.isFetching} />
+          )}
+
+          {query.data && (
+            <>
+              <p className="sr-only" aria-live="polite">
+                {t("count", { count: visible.length })}
+              </p>
+              {view === "grid" ? (
+                visible.length === 0 ? (
+                  empty
+                ) : (
+                  <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                    {visible.map((a) => (
+                      <li key={a.login} className="flex">
+                        <AccountCard account={a} />
+                      </li>
+                    ))}
+                  </ul>
+                )
+              ) : (
+                <DataTable
+                  data={visible}
+                  columns={columns}
+                  caption={t("title")}
+                  getRowId={(a) => String(a.login)}
+                  csvName={`winprofx-accounts-${tab}`}
+                  empty={empty}
+                  onRowClick={(a) => router.push(`/trading/accounts/${a.login}`)}
+                />
+              )}
+            </>
+          )}
+        </TabsContent>
+      </Tabs>
     </>
   );
 }
