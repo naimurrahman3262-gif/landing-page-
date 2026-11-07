@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import type { Alert, Transaction } from "@/lib/api/schemas";
+import type { Alert } from "@/lib/api/schemas";
 import { toUsd } from "../fixtures/accounts";
 import { round2 } from "../fixtures/random";
 import { portfolio } from "../store";
@@ -101,25 +101,6 @@ export const portfolioHandlers = [
         },
         { id: "downloadPlatform", done: p.platformDownloaded },
       ],
-    });
-  }),
-
-  /** Phase 4 needs `limit`; Phase 5 adds the full filter set. */
-  http.get(`${BACKEND_URL}/transactions`, async ({ request }) => {
-    const user = await guard(request, "transactions");
-    if (user instanceof Response) return user;
-    const url = new URL(request.url);
-    const pageSize = Math.min(
-      Number(url.searchParams.get("pageSize") ?? url.searchParams.get("limit") ?? 25),
-      100,
-    );
-    const page = Math.max(1, Number(url.searchParams.get("page") ?? 1));
-    const all: Transaction[] = portfolio(user.id).transactions;
-    return json({
-      items: all.slice((page - 1) * pageSize, page * pageSize),
-      total: all.length,
-      page,
-      pageSize,
     });
   }),
 ];

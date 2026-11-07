@@ -1,4 +1,14 @@
-import type { Account, Deal, Notification, PendingOrder, Position, Transaction } from "@/lib/api/schemas";
+import type {
+  Account,
+  Deal,
+  Handoff,
+  Notification,
+  PayoutMethod,
+  PendingOrder,
+  Position,
+  Transaction,
+} from "@/lib/api/schemas";
+import { seedPayoutMethods } from "./fixtures/methods";
 import { WALLET_BALANCE, seedAccounts, seedPendingOrders, seedPositions } from "./fixtures/accounts";
 import { seedDeals } from "./fixtures/deals";
 import { seedTransactions } from "./fixtures/transactions";
@@ -15,6 +25,19 @@ export interface Portfolio {
   profileComplete: boolean;
   platformDownloaded: boolean;
   syncedAt: string;
+  payouts: PayoutMethod[];
+  /** Extra detail for transactions created in this session (handoff, rate, masked destination). */
+  details: Map<string, FundsDetail>;
+}
+
+export interface FundsDetail {
+  handoff: Handoff | null;
+  destinationMasked: string | null;
+  rate: number | null;
+  localAmount: number | null;
+  localCurrency: string | null;
+  /** Deposits move pending → processing → approved over time (mock settlement). */
+  settle?: { processingAt: number; doneAt: number; outcome: "approved" | "failed" };
 }
 
 /**
@@ -93,6 +116,8 @@ export function portfolio(userId: string): Portfolio {
         profileComplete: true,
         platformDownloaded: true,
         syncedAt: new Date(now).toISOString(),
+        payouts: seedPayoutMethods(),
+        details: new Map(),
       };
     } else {
       p = {
@@ -105,6 +130,8 @@ export function portfolio(userId: string): Portfolio {
         profileComplete: false,
         platformDownloaded: false,
         syncedAt: new Date(now).toISOString(),
+        payouts: [],
+        details: new Map(),
       };
     }
     store.set(userId, p);

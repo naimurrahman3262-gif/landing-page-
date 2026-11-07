@@ -19,8 +19,13 @@ export function toUsd(amount: number, currency: string): number {
 
 export const isFunded = (a: Account) => a.equity > 0;
 
-/** What can be withdrawn: free margin, never balance (brief §6.5). */
-export const withdrawable = (a: Account) => Math.max(0, a.freeMargin);
+/**
+ * What can be withdrawn or transferred out (brief §6.5: free margin, not balance).
+ * Credit (bonus) is never withdrawable and open profit isn't realised yet, so:
+ * min(free margin − credit, balance), never below zero. In account currency.
+ */
+export const withdrawable = (a: Pick<Account, "freeMargin" | "credit" | "balance">) =>
+  Math.max(0, Math.round(Math.min(a.freeMargin - a.credit, a.balance) * 100) / 100);
 
 export type ActionState = { enabled: true } | { enabled: false; reason: "status" | "zero" };
 

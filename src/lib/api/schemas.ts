@@ -348,3 +348,162 @@ export const TransactionPage = z.object({
   page: z.number().int(),
   pageSize: z.number().int(),
 });
+
+/* -------------------------------- funds -------------------------------- */
+
+/** Wallet or an MT5 login, as a string for URLs and pickers: "wallet" | "137481". */
+export const Destination = z.union([z.literal("wallet"), z.string().regex(/^\d{4,12}$/)]);
+export type Destination = z.infer<typeof Destination>;
+
+export const Wallet = z.object({ balance: z.number(), currency: z.string(), syncedAt: z.string() });
+export type Wallet = z.infer<typeof Wallet>;
+
+export const MethodKind = z.enum(["crypto", "bank", "upi", "local"]);
+
+/** One payment method. Limits are in USD; `rate` converts to the local currency. */
+export const Method = z.object({
+  id: z.string(),
+  name: z.string(),
+  kind: MethodKind,
+  /** Network or provider line, e.g. "TRON network (TRC20)". */
+  description: z.string(),
+  /** Real text, e.g. "Instant – 30 min" (old bug: icons only). */
+  eta: z.string(),
+  feeFixed: z.number(),
+  feePct: z.number(),
+  min: z.number(),
+  max: z.number(),
+  localCurrency: z.string(),
+  /** Local currency units per 1 USD. */
+  rate: z.number(),
+  presets: z.array(z.number()),
+  countries: z.array(z.string()).nullable(),
+  howItWorks: z.array(z.string()),
+  /** Withdrawals: can this method be used, and if not, why not. */
+  withdrawable: z.boolean(),
+  withdrawNote: z.string().nullable(),
+});
+export type Method = z.infer<typeof Method>;
+
+export const MethodList = z.object({ items: z.array(Method), country: z.string() });
+
+export const Quote = z.object({
+  amount: z.number(),
+  fee: z.number(),
+  /** What reaches the destination, USD. */
+  net: z.number(),
+  rate: z.number(),
+  localAmount: z.number(),
+  localCurrency: z.string(),
+  eta: z.string(),
+});
+export type Quote = z.infer<typeof Quote>;
+
+export const DepositInput = z.object({
+  methodId: z.string().min(1),
+  destination: Destination,
+  amount: z.number().positive().multipleOf(0.01),
+});
+
+export const Handoff = z.discriminatedUnion("kind", [
+  z.object({
+    kind: z.literal("crypto"),
+    network: z.string(),
+    asset: z.string(),
+    address: z.string(),
+    expiresAt: z.string(),
+  }),
+  z.object({ kind: z.literal("redirect"), provider: z.string(), url: z.string() }),
+  z.object({
+    kind: z.literal("bank"),
+    beneficiary: z.string(),
+    bankName: z.string(),
+    accountNumber: z.string(),
+    ifsc: z.string(),
+    reference: z.string(),
+  }),
+]);
+export type Handoff = z.infer<typeof Handoff>;
+
+export const TimelineStep = z.object({
+  status: z.enum(["created", "pending", "processing", "approved", "rejected", "failed", "cancelled"]),
+  at: z.string(),
+  note: z.string().nullable(),
+});
+
+export const PayoutMethod = z.object({
+  id: z.string(),
+  type: z.enum(["bank", "crypto"]),
+  /** Withdrawal method this payout destination uses. */
+  methodId: z.string(),
+  label: z.string(),
+  /** Masked: "•••• 5467" or "TQ7m…9xQa". */
+  masked: z.string(),
+  holderName: z.string().nullable(),
+  status: z.enum(["verified", "pending", "rejected"]),
+  isDefault: z.boolean(),
+  rejectionReason: z.string().nullable(),
+});
+export type PayoutMethod = z.infer<typeof PayoutMethod>;
+
+export const AddPayoutInput = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("bank"),
+    methodId: z.string(),
+    holderName: z.string().trim().min(2, "holderNameRequired").max(80),
+    bankName: z.string().trim().min(2, "bankNameRequired").max(80),
+    accountNumber: z.string().regex(/^\d{9,18}$/, "accountNumberInvalid"),
+    ifsc: z
+      .string()
+      .toUpperCase()
+      .regex(/^[A-Z]{4}0[A-Z0-9]{6}$/, "ifscInvalid"),
+  }),
+  z.object({
+    type: z.literal("crypto"),
+    methodId: z.string(),
+    label: z.string().trim().min(1, "labelRequired").max(40),
+    address: z
+      .string()
+      .trim()
+      .regex(/^(T[1-9A-HJ-NP-Za-km-z]{33}|0x[a-fA-F0-9]{40})$/, "addressInvalid"),
+  }),
+]);
+export type AddPayoutInput = z.infer<typeof AddPayoutInput>;
+
+export const WithdrawInput = z.object({
+  source: Destination,
+  payoutMethodId: z.string().min(1),
+  amount: z.number().positive().multipleOf(0.01),
+});
+
+export const TransferInput = z
+  .object({ from: Destination, to: Destination, amount: z.number().positive().multipleOf(0.01) })
+  .refine((v) => v.from !== v.to, { path: ["to"], message: "transferSame" });
+
+export const FundsResult = z.object({
+  transaction: Transaction,
+  handoff: Handoff.nullable(),
+  timeline: z.array(TimelineStep),
+});
+export type FundsResult = z.infer<typeof FundsResult>;
+
+export const TransactionDetail = Transaction.extend({
+  timeline: z.array(TimelineStep),
+  handoff: Handoff.nullable(),
+  /** Masked payout destination for withdrawals. */
+  destinationMasked: z.string().nullable(),
+  rate: z.number().nullable(),
+  localAmount: z.number().nullable(),
+  localCurrency: z.string().nullable(),
+});
+export type TransactionDetail = z.infer<typeof TransactionDetail>;
+
+export const TransactionSummary = z.object({
+  approvedDeposits: z.number(),
+  approvedWithdrawals: z.number(),
+  approvedDepositCount: z.number().int(),
+  approvedWithdrawalCount: z.number().int(),
+  /** approvedDeposits − approvedWithdrawals. Transfers between own accounts are excluded. */
+  net: z.number(),
+});
+export type TransactionSummary = z.infer<typeof TransactionSummary>;

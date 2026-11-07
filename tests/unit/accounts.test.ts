@@ -19,10 +19,11 @@ describe("account helpers", () => {
     expect(accountName(byLogin(137502))).toBe("MT5 · 137502");
   });
 
-  it("withdrawable is free margin, never balance", () => {
-    const main = byLogin(137481);
-    expect(withdrawable(main)).toBe(main.freeMargin);
-    expect(withdrawable(main)).not.toBe(main.balance);
+  it("withdrawable = min(free margin − credit, balance): no bonus credit, no unrealised profit", () => {
+    // Main: free margin 76,078.19 − credit 48.34 = 76,029.85 > balance 75,919.70 → balance.
+    expect(withdrawable(byLogin(137481))).toBe(75919.7);
+    expect(withdrawable({ freeMargin: 900, credit: 100, balance: 2000 })).toBe(800); // margin in use
+    expect(withdrawable({ freeMargin: -50, credit: 0, balance: 0 })).toBe(0);
   });
 
   it("disables money actions with a reason", () => {
