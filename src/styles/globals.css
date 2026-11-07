@@ -49,6 +49,8 @@
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-grid: var(--chart-grid);
+  --color-qr-bg: var(--qr-bg);
+  --color-qr-ink: var(--qr-ink);
   --color-money-in: var(--money-in);
   --color-money-out: var(--money-out);
 
@@ -139,4 +141,8 @@
 }
 @utility pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
+}
+@utility text-2xs {
+  font-size: 0.625rem;
+  line-height: 1rem;
 }

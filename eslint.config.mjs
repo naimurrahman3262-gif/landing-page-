@@ -13,6 +13,9 @@ const eslintConfig = [
     rules: {
       // Brief §3: no arbitrary hex in components — use tokens. Enforced by review + Phase 2 lint rule.
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
+      // autoFocus is allowed only via our components, and only on the single field of a
+      // single-task auth step (email, OTP). Raw DOM elements are still checked.
+      "jsx-a11y/no-autofocus": ["error", { ignoreNonDOM: true }],
     },
   },
   {

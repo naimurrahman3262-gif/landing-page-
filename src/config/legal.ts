@@ -11,6 +11,8 @@ export interface LegalConfig {
   licenceNumber: string | null;
   regulator: string | null;
   riskLine: string | null;
+  /** Long-form risk disclosure shown in the footer's collapsible section. */
+  riskDisclosureFull: string | null;
   supportEmail: string | null;
   supportPhone: string | null;
 }
@@ -21,6 +23,7 @@ export const LEGAL: LegalConfig = {
   licenceNumber: null,
   regulator: null,
   riskLine: null,
+  riskDisclosureFull: null,
   supportEmail: null,
   supportPhone: null,
 };

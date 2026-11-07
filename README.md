@@ -12,6 +12,20 @@ pnpm dev                     # http://localhost:3000
 
 With `NEXT_PUBLIC_API_MOCKING=enabled`, BFF route handlers (`src/app/api/*`) call `BACKEND_URL`, which MSW intercepts (`src/mocks`). Append `?mockError=<domain>` to force an error from a mocked domain.
 
+## Mock sign-in
+
+With mocking on, `/login` lists the demo personas: `verified@winprofx.test` (2FA) and `new@winprofx.test` (unverified email). The password is `Winpro#2026` and every code is `123456`.
+
+## Deploying (Vercel)
+
+Set these in Vercel → Project → Settings → Environment Variables:
+
+| Variable                  | Notes                                                       |
+| ------------------------- | ----------------------------------------------------------- |
+| `SESSION_SECRET`          | ≥ 32 random chars. Required unless mocking.                 |
+| `BACKEND_URL`             | Upstream API the BFF proxies to.                            |
+| `NEXT_PUBLIC_API_MOCKING` | `enabled` for previews that should run on the mock backend. |
+
 ## Scripts
 
 | Script                         | What it does                      |

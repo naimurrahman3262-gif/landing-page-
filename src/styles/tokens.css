@@ -66,6 +66,10 @@
   --chart-area-from: rgb(0 217 255 / 0.28);
   --chart-area-to: rgb(0 217 255 / 0);
 
+  /* QR codes stay dark-on-white in both themes so phone cameras can read them */
+  --qr-bg: #ffffff;
+  --qr-ink: #0a0a0c;
+
   /* radius, shadow, motion */
   --radius-sm: 6px;
   --radius-md: 10px;
