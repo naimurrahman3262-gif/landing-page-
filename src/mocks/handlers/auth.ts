@@ -10,7 +10,7 @@ import {
   VerifyEmailInput,
 } from "@/lib/api/schemas";
 import { DEMO_CODE } from "../fixtures/users";
-import { db, findUserByEmail, newId, publicUser } from "../store";
+import { cloneVerifiedPersona, db, findUserByEmail, newId, publicUser } from "../store";
 import { BACKEND_URL, forcedError, mockLatency } from "../utils";
 import { z } from "zod";
 
@@ -56,7 +56,7 @@ export const authHandlers = [
     if (forced) return forced;
     const { data, fail } = await parse(request, LoginInput);
     if (fail) return fail;
-    const user = findUserByEmail(data.email);
+    const user = findUserByEmail(data.email) ?? cloneVerifiedPersona(data.email);
     if (!user || user.password !== data.password) {
       return error(401, "INVALID_CREDENTIALS", "The email or password is incorrect.");
     }

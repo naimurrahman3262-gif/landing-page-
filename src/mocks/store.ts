@@ -101,7 +101,7 @@ export function portfolio(userId: string): Portfolio {
   let p = store.get(userId);
   if (!p) {
     const now = Date.now();
-    if (userId === "u_1001") {
+    if (isVerifiedPersona(userId)) {
       const positions = seedPositions(now);
       p = {
         accounts: seedAccounts(positions),
@@ -139,4 +139,24 @@ export function portfolio(userId: string): Portfolio {
   // Prices "tick": the sync time is when the data was read from MT5.
   p.syncedAt = new Date().toISOString();
   return p;
+}
+
+/** The verified persona and its test clones get the full fixture set. */
+function isVerifiedPersona(userId: string): boolean {
+  return userId === "u_1001" || !!db().users.get(userId)?.email.startsWith("verified+");
+}
+
+/**
+ * Test isolation: "verified+<anything>@winprofx.test" signs in as a private
+ * clone of the verified persona with its own freshly seeded portfolio, so
+ * parallel tests that move money can't change each other's figures.
+ */
+export function cloneVerifiedPersona(email: string): MockUser | undefined {
+  if (!/^verified\+[\w.-]+@winprofx\.test$/i.test(email)) return undefined;
+  const base = db().users.get("u_1001")!;
+  const id = newId("u");
+  const clone: MockUser = { ...base, id, email: email.toLowerCase() };
+  db().users.set(id, clone);
+  db().notifications.set(id, seedNotifications());
+  return clone;
 }

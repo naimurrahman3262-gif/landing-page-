@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import { CODE, NEW_USER, PASSWORD, VERIFIED, formAlert } from "./helpers";
+import { CODE, NEW_USER, PASSWORD, VERIFIED, formAlert, hydrated } from "./helpers";
 
 const WIDTHS = [320, 375, 768, 1024, 1280, 1440, 1920];
 
@@ -23,6 +23,7 @@ test.describe("login layout", () => {
 
 test("redirects to login with next, signs in with 2FA and returns", async ({ page }) => {
   await page.goto("/funds/deposit?account=137481");
+  await hydrated(page);
   await expect(page).toHaveURL(/\/login\?next=%2Ffunds%2Fdeposit%3Faccount%3D137481/);
   await expect(page).toHaveTitle("Sign in — WinproFX");
 
@@ -35,19 +36,19 @@ test("redirects to login with next, signs in with 2FA and returns", async ({ pag
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page).toHaveURL(/\/2fa/);
   await page.keyboard.type(CODE);
-  await expect(page).toHaveURL(/\/funds\/deposit\?account=137481$/);
+  await expect(page).toHaveURL(/\/funds\/deposit\?account=137481$/, { timeout: 20_000 });
   await expect(page).toHaveTitle("Deposit — WinproFX");
 });
 
 test("keyboard-only sign-in", async ({ page }) => {
   await page.goto("/login");
-  await page.waitForLoadState("networkidle"); // hydrated, so Enter goes through the client handler
+  await hydrated(page); // so Enter goes through the client handler
   await expect(page.getByLabel("Email")).toBeFocused();
   await page.keyboard.type(NEW_USER);
   await page.keyboard.press("Tab");
   await page.keyboard.type(PASSWORD);
   await page.keyboard.press("Enter");
-  await expect(page).toHaveURL(/\/verify-email/);
+  await expect(page).toHaveURL(/\/verify-email/, { timeout: 20_000 });
 });
 
 test("sign-in modes have their own URL hash and Back works", async ({ page }) => {

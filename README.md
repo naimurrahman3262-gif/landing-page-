@@ -26,6 +26,18 @@ Set these in Vercel → Project → Settings → Environment Variables:
 | `BACKEND_URL`             | Upstream API the BFF proxies to.                            |
 | `NEXT_PUBLIC_API_MOCKING` | `enabled` for previews that should run on the mock backend. |
 
+## Running e2e locally
+
+CI runs Playwright against a production build. Locally, do the same for stable results:
+
+```bash
+NEXT_PUBLIC_API_MOCKING=enabled NEXT_PUBLIC_STYLEGUIDE=enabled pnpm build
+NEXT_PUBLIC_API_MOCKING=enabled pnpm start -p 3000 &
+pnpm test:e2e
+```
+
+Tests sign in as `verified+<random>@winprofx.test`, a private copy of the verified persona with its own mock data, so parallel tests can't affect each other.
+
 ## Scripts
 
 | Script                         | What it does                      |

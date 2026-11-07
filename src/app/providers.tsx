@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { FormatProvider } from "@/lib/format-context";
@@ -18,6 +18,10 @@ function makeQueryClient() {
 
 export function Providers({ children, timeZone }: { children: ReactNode; timeZone: string }) {
   const [queryClient] = useState(makeQueryClient);
+  // Marks the app as interactive (used by e2e tests to avoid pre-hydration input).
+  useEffect(() => {
+    document.documentElement.dataset.hydrated = "true";
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <NuqsAdapter>
