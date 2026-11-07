@@ -52,9 +52,9 @@ export function TransactionRow({ tx, accounts }: { tx: Transaction; accounts?: A
       <span className="mt-0.5 grid size-9 shrink-0 place-content-center rounded-full bg-surface-3 text-text-2">
         <Icon aria-hidden className="size-4" />
       </span>
-      <div className="grid min-w-0 flex-1 gap-1">
+      <div className="grid min-w-0 flex-1 grid-cols-1 gap-1">
         <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1 basis-40">
             <p className="truncate text-sm font-medium text-text-1">
               {t(`types.${tx.type}`)}
               {tx.method && <span className="text-text-2"> · {tx.method}</span>}

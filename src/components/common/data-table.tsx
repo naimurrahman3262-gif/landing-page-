@@ -110,7 +110,7 @@ export function DataTable<T>({
   const pages = table.getPageCount();
 
   return (
-    <div className="grid gap-3">
+    <div className="grid min-w-0 grid-cols-1 gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">{toolbar}</div>
         <div className="flex items-center gap-2">
@@ -230,7 +230,7 @@ export function DataTable<T>({
           </div>
 
           {/* Mobile: stacked cards from the same columns */}
-          <ul className="grid gap-2 md:hidden" aria-label={caption}>
+          <ul className="grid grid-cols-1 gap-2 md:hidden" aria-label={caption}>
             {rows.map((row) => (
               <li key={row.id} className="rounded-lg border border-border bg-surface-1 p-4">
                 {renderCard ? (
