@@ -1,0 +1,82 @@
+/*
+ * WinproFX design tokens.
+ *
+ * STATUS: PLACEHOLDER (Phase 1).
+ * Values below are the defaults from the build brief (section 3). The Figma
+ * file supplied so far is an inspiration moodboard, not WinproFX screens, so no
+ * tokens could be extracted yet. See docs/design-inventory.md §3.
+ * Final values are set in Phase 2 once the open token questions are answered.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* surfaces */
+  --bg: #0b1020;
+  --surface-1: #121931;
+  --surface-2: #1a2240;
+  --surface-3: #232c4d;
+  --border: #2a3458;
+  --border-strong: #3a4670;
+
+  /* text */
+  --text-1: #f5f7ff;
+  --text-2: #b6bed8;
+  --text-3: #8790b0; /* must pass 4.5:1 on --surface-1 — verified in Phase 2 */
+
+  /* brand (fixed) */
+  --primary: #00d9ff;
+  --primary-hover: #00c3e6;
+  --primary-active: #00adcc;
+  --primary-soft: rgb(0 217 255 / 0.12);
+  --primary-border: rgb(0 217 255 / 0.4);
+  --primary-text: var(--primary); /* cyan text is fine on dark surfaces */
+  --on-primary: #00141a; /* dark text on cyan; white on #00D9FF fails contrast */
+  --focus-ring: #00d9ff;
+
+  /* semantic */
+  --success: #22c55e;
+  --warning: #f5a524;
+  --danger: #ef4444;
+  --info: #38bdf8;
+
+  /* money direction (not status) */
+  --money-in: var(--success);
+  --money-out: var(--text-1);
+
+  /* radius, shadow, motion */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-2: 0 8px 24px rgb(0 0 0 / 0.35);
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+}
+
+/* Light theme — PLACEHOLDER set, completed and contrast-checked in Phase 2. */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f6f8fc;
+  --surface-1: #ffffff;
+  --surface-2: #f0f3f9;
+  --surface-3: #e6eaf3;
+  --border: #d8deea;
+  --border-strong: #b9c2d6;
+
+  --text-1: #0b1020;
+  --text-2: #3a4560;
+  --text-3: #5b6680;
+
+  --primary-text: #007a99; /* #00D9FF on white is ~1.6:1; use darker cyan for text */
+  --primary-soft: rgb(0 217 255 / 0.14);
+  --primary-border: rgb(0 173 204 / 0.5);
+  --focus-ring: #007a99;
+
+  --money-out: var(--text-1);
+  --shadow-1: 0 1px 2px rgb(16 24 40 / 0.06);
+  --shadow-2: 0 8px 24px rgb(16 24 40 / 0.1);
+}

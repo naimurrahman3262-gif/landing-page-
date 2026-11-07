@@ -1,0 +1,83 @@
+{
+  "name": "winprofx-portal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test --trace off",
+    "check": "pnpm lint && pnpm typecheck && pnpm test"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^7.0.3",
+    "@tanstack/react-query": "^5.107.1",
+    "@tanstack/react-query-devtools": "^5.107.1",
+    "@tanstack/react-table": "^8.21.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.4.0",
+    "date-fns-tz": "^3.2.0",
+    "input-otp": "^1.5.0",
+    "lucide-react": "^1.70.0",
+    "next": "15.5.29",
+    "next-intl": "^4.14.9",
+    "nuqs": "^2.10.2",
+    "qrcode.react": "^4.2.0",
+    "radix-ui": "^1.8.1",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-dropzone": "^20.1.4",
+    "react-hook-form": "^7.91.0",
+    "recharts": "^3.10.1",
+    "sonner": "^2.0.8",
+    "tailwind-merge": "^3.7.0",
+    "tw-animate-css": "^1.4.0",
+    "zod": "^4.6.7",
+    "zustand": "^5.1.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.65.0",
+    "@tailwindcss/postcss": "^4",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.2.1",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.29",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "jsdom": "^31.0.0",
+    "msw": "^2.15.0",
+    "prettier": "^3.9.10",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^5.1.0"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  },
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=20.18"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "msw"
+    ]
+  }
+}

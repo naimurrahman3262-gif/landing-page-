@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "description": "Manage your trading accounts, deposits, withdrawals and verification."
+  },
+  "nav": {
+    "home": "Home",
+    "overview": "Overview",
+    "funds": "Funds",
+    "deposit": "Deposit",
+    "withdraw": "Withdraw",
+    "transfer": "Transfer",
+    "transactions": "Transactions",
+    "trading": "Trading",
+    "accounts": "Accounts",
+    "positions": "Positions & history",
+    "platforms": "Platforms",
+    "openAccount": "Open account",
+    "insights": "Insights",
+    "news": "News",
+    "signals": "Signals",
+    "analysis": "Analysis",
+    "calculator": "Calculator",
+    "invest": "Invest",
+    "social": "Social trading",
+    "pamm": "PAMM",
+    "rewards": "Rewards",
+    "referrals": "Referrals",
+    "tradingRewards": "Trading rewards",
+    "help": "Help",
+    "helpCentre": "Help centre",
+    "tickets": "Tickets",
+    "account": "Account",
+    "profile": "Profile",
+    "verification": "Verification",
+    "security": "Security",
+    "paymentMethods": "Payment methods",
+    "preferences": "Preferences"
+  },
+  "scaffold": {
+    "title": "Project setup",
+    "heading": "Phase 1 scaffold",
+    "body": "Foundations, shell and screens arrive in the next phases. This page is replaced by Home in Phase 4.",
+    "apiCheck": "Mock API check",
+    "apiOk": "BFF → mock backend responded",
+    "apiError": "The mock backend did not respond. Check NEXT_PUBLIC_API_MOCKING.",
+    "checking": "Checking…",
+    "displayFont": "Satoshi — display",
+    "bodyFont": "Inter — body"
+  }
+}
