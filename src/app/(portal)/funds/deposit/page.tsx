@@ -1,11 +1,8 @@
-import { getTranslations } from "next-intl/server";
-import { RouteStub } from "@/components/shell/coming-soon";
+import { DepositFlow } from "@/components/funds/deposit-flow";
 import { navMetadata } from "@/lib/page";
 
 export const generateMetadata = () => navMetadata("deposit");
 
-/** Stub: the screen for this route is built in a later phase. */
-export default async function Page() {
-  const t = await getTranslations("nav");
-  return <RouteStub title={t("deposit")} />;
+export default function DepositPage() {
+  return <DepositFlow />;
 }

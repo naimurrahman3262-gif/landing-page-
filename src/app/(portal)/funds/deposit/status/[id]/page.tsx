@@ -1,11 +1,11 @@
-import { getTranslations } from "next-intl/server";
-import { RouteStub } from "@/components/shell/coming-soon";
+import { FundsStatusView } from "@/components/funds/funds-status-view";
 import { navMetadata } from "@/lib/page";
 
 export const generateMetadata = () => navMetadata("depositStatus");
 
-/** Stub: the screen for this route is built in a later phase. */
-export default async function Page() {
-  const t = await getTranslations("nav");
-  return <RouteStub title={t("depositStatus")} backHref="/funds/deposit" />;
+type Props = { params: Promise<{ id: string }> };
+
+export default async function DepositStatusPage({ params }: Props) {
+  const { id } = await params;
+  return <FundsStatusView id={id} kind="deposit" />;
 }
