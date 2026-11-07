@@ -507,3 +507,185 @@ export const TransactionSummary = z.object({
   net: z.number(),
 });
 export type TransactionSummary = z.infer<typeof TransactionSummary>;
+
+/* ------------------------------- account ------------------------------- */
+
+export const Profile = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string(),
+  phone: z.string().nullable(),
+  dateOfBirth: z.string().nullable(),
+  country: z.string(),
+  state: z.string().nullable(),
+  city: z.string().nullable(),
+  address: z.string().nullable(),
+  postcode: z.string().nullable(),
+  /** Fields locked after KYC: shown read-only with "Contact support to change". */
+  locked: z.array(z.string()),
+  completion: z.number().int().min(0).max(100),
+});
+export type Profile = z.infer<typeof Profile>;
+
+export const ProfileInput = z.object({
+  firstName: z.string().trim().min(1, "firstNameRequired").max(50),
+  lastName: z.string().trim().min(1, "lastNameRequired").max(50),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^\+[1-9]\d{7,14}$/, "phoneInvalid")
+    .or(z.literal("")),
+  dateOfBirth: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "dobInvalid")
+    .or(z.literal("")),
+  country: countryCode,
+  state: z.string().trim().max(80),
+  city: z.string().trim().max(80),
+  address: z.string().trim().max(160),
+  postcode: z.string().trim().max(12),
+});
+export type ProfileInput = z.infer<typeof ProfileInput>;
+
+export const KycDocType = z.enum(["poiFront", "poiBack", "poa", "selfie"]);
+export type KycDocType = z.infer<typeof KycDocType>;
+
+export const KycDocument = z.object({
+  type: KycDocType,
+  status: z.enum(["missing", "pending", "verified", "rejected", "expired"]),
+  fileName: z.string().nullable(),
+  uploadedAt: z.string().nullable(),
+  expiresAt: z.string().nullable(),
+  rejectionReason: z.string().nullable(),
+});
+export type KycDocument = z.infer<typeof KycDocument>;
+
+export const Kyc = z.object({
+  status: KycStatus,
+  documents: z.array(KycDocument),
+  reviewedAt: z.string().nullable(),
+});
+export type Kyc = z.infer<typeof Kyc>;
+
+/** Upload metadata. The real BFF streams the file (multipart) to the backend. */
+export const KycUploadInput = z.object({
+  type: KycDocType,
+  fileName: z.string().min(1).max(200),
+  mimeType: z.enum(["image/jpeg", "image/png", "image/webp", "application/pdf"]),
+  size: z
+    .number()
+    .int()
+    .positive()
+    .max(10 * 1024 * 1024),
+});
+
+export const Session = z.object({
+  id: z.string(),
+  device: z.string(),
+  location: z.string(),
+  ip: z.string(),
+  lastActiveAt: z.string(),
+  current: z.boolean(),
+});
+export const LoginEvent = z.object({
+  at: z.string(),
+  device: z.string(),
+  location: z.string(),
+  result: z.enum(["success", "failed", "twoFactorFailed"]),
+});
+export const SecurityOverview = z.object({
+  twoFactorEnabled: z.boolean(),
+  backupCodesRemaining: z.number().int(),
+  passwordChangedAt: z.string().nullable(),
+  sessions: z.array(Session),
+  loginHistory: z.array(LoginEvent),
+});
+export type SecurityOverview = z.infer<typeof SecurityOverview>;
+
+export const ChangePasswordInput = z
+  .object({ current: z.string().min(1, "passwordRequired"), password, confirm: z.string() })
+  .refine((v) => v.password === v.confirm, { path: ["confirm"], message: "passwordMismatch" })
+  .refine((v) => v.password !== v.current, { path: ["password"], message: "passwordSame" });
+
+export const Preferences = z.object({
+  locale: z.string(),
+  theme: z.enum(["dark", "light"]),
+  timeZone: z.string(),
+  sound: z.boolean(),
+  notifications: z.object({
+    email: z.object({
+      funds: z.boolean(),
+      security: z.boolean(),
+      support: z.boolean(),
+      marketing: z.boolean(),
+    }),
+    push: z.object({
+      funds: z.boolean(),
+      security: z.boolean(),
+      support: z.boolean(),
+      marketing: z.boolean(),
+    }),
+  }),
+});
+export type Preferences = z.infer<typeof Preferences>;
+
+/* --------------------------------- help -------------------------------- */
+
+export const Article = z.object({
+  slug: z.string(),
+  title: z.string(),
+  category: z.string(),
+  summary: z.string(),
+  body: z.array(z.string()),
+  updatedAt: z.string(),
+  popular: z.boolean(),
+});
+export type Article = z.infer<typeof Article>;
+
+export const TicketCategory = z.enum([
+  "deposit",
+  "withdrawal",
+  "account",
+  "trading",
+  "verification",
+  "other",
+]);
+export const TicketStatus = z.enum(["open", "awaitingReply", "closed"]);
+
+export const TicketMessage = z.object({
+  id: z.string(),
+  author: z.enum(["client", "support"]),
+  authorName: z.string(),
+  body: z.string(),
+  at: z.string(),
+  attachments: z.array(z.object({ name: z.string(), size: z.number() })),
+});
+
+export const Ticket = z.object({
+  id: z.string(),
+  number: z.number().int(),
+  subject: z.string(),
+  category: TicketCategory,
+  status: TicketStatus,
+  login: z.number().int().nullable(),
+  transactionId: z.string().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  messages: z.array(TicketMessage),
+});
+export type Ticket = z.infer<typeof Ticket>;
+
+export const NewTicketInput = z.object({
+  category: TicketCategory,
+  login: z.number().int().nullable(),
+  transactionId: z.string().nullable(),
+  subject: z.string().trim().min(5, "subjectShort").max(120),
+  description: z.string().trim().min(20, "descriptionShort").max(5000),
+  attachments: z.array(z.object({ name: z.string(), size: z.number().max(10 * 1024 * 1024) })).max(5),
+});
+export type NewTicketInput = z.infer<typeof NewTicketInput>;
+
+export const TicketReplyInput = z.object({
+  body: z.string().trim().min(1, "replyRequired").max(5000),
+  attachments: z.array(z.object({ name: z.string(), size: z.number() })).max(5),
+});

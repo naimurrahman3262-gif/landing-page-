@@ -1,6 +1,12 @@
 import type { ZodType } from "zod";
 import {
   AddPayoutInput,
+  ChangePasswordInput,
+  KycUploadInput,
+  NewTicketInput,
+  Preferences,
+  ProfileInput,
+  TicketReplyInput,
   DepositInput,
   TransferInput,
   WithdrawInput,
@@ -23,6 +29,12 @@ export const MUTATION_SCHEMAS: { method: string; path: RegExp; schema: ZodType }
   { method: "POST", path: /^withdrawals$/, schema: WithdrawInput },
   { method: "POST", path: /^transfers$/, schema: TransferInput },
   { method: "POST", path: /^payout-methods$/, schema: AddPayoutInput },
+  { method: "PATCH", path: /^profile$/, schema: ProfileInput },
+  { method: "POST", path: /^kyc\/documents$/, schema: KycUploadInput },
+  { method: "POST", path: /^security\/password$/, schema: ChangePasswordInput },
+  { method: "PATCH", path: /^preferences$/, schema: Preferences },
+  { method: "POST", path: /^tickets$/, schema: NewTicketInput },
+  { method: "POST", path: /^tickets\/[\w-]+\/messages$/, schema: TicketReplyInput },
 ];
 
 export function schemaFor(method: string, path: string): ZodType | undefined {

@@ -2,12 +2,17 @@ import type {
   Account,
   Deal,
   Handoff,
+  KycDocument,
   Notification,
   PayoutMethod,
   PendingOrder,
   Position,
+  Preferences,
+  SecurityOverview,
+  Ticket,
   Transaction,
 } from "@/lib/api/schemas";
+import { seedTickets } from "./fixtures/help";
 import { seedPayoutMethods } from "./fixtures/methods";
 import { WALLET_BALANCE, seedAccounts, seedPendingOrders, seedPositions } from "./fixtures/accounts";
 import { seedDeals } from "./fixtures/deals";
@@ -56,6 +61,22 @@ interface MockDb {
   portfolios: Map<string, Portfolio>;
   /** step-up token → { userId, expiresAt } */
   stepUp: Map<string, { userId: string; expiresAt: number }>;
+  accountData: Map<string, AccountData>;
+}
+
+/** Profile extras, KYC, security, preferences and tickets for one user. */
+export interface AccountData {
+  phone: string | null;
+  dateOfBirth: string | null;
+  state: string | null;
+  city: string | null;
+  address: string | null;
+  postcode: string | null;
+  kyc: KycDocument[];
+  security: Omit<SecurityOverview, "twoFactorEnabled">;
+  pendingTotpSecret: string | null;
+  preferences: Preferences;
+  tickets: Ticket[];
 }
 
 const g = globalThis as unknown as { __wpxMockDb?: MockDb };
@@ -70,6 +91,7 @@ function seed(): MockDb {
     notifications: new Map([["u_1001", seedNotifications()]]),
     portfolios: new Map(),
     stepUp: new Map(),
+    accountData: new Map(),
   };
 }
 
@@ -159,4 +181,159 @@ export function cloneVerifiedPersona(email: string): MockUser | undefined {
   db().users.set(id, clone);
   db().notifications.set(id, seedNotifications());
   return clone;
+}
+
+/** Lazily seeded account data. Verified persona (and clones) get the full set. */
+export function accountData(userId: string): AccountData {
+  const store = db().accountData;
+  let a = store.get(userId);
+  if (a) return a;
+  const now = Date.now();
+  const ago = (h: number) => new Date(now - h * 3_600_000).toISOString();
+  const user = db().users.get(userId);
+  const verified = isVerifiedPersona(userId);
+  const prefs: Preferences = {
+    locale: "en",
+    theme: "dark",
+    timeZone: user?.timeZone ?? "UTC",
+    sound: false,
+    notifications: {
+      email: { funds: true, security: true, support: true, marketing: false },
+      push: { funds: true, security: true, support: true, marketing: false },
+    },
+  };
+  a = verified
+    ? {
+        phone: "+8801711234567",
+        dateOfBirth: "1990-04-12",
+        state: "Dhaka",
+        city: "Dhaka",
+        address: "House 12, Road 7, Dhanmondi",
+        postcode: "1209",
+        kyc: [
+          {
+            type: "poiFront",
+            status: "verified",
+            fileName: "nid-front.jpg",
+            uploadedAt: "2025-03-21T10:00:00Z",
+            expiresAt: "2031-02-28T00:00:00Z",
+            rejectionReason: null,
+          },
+          {
+            type: "poiBack",
+            status: "verified",
+            fileName: "nid-back.jpg",
+            uploadedAt: "2025-03-21T10:01:00Z",
+            expiresAt: "2031-02-28T00:00:00Z",
+            rejectionReason: null,
+          },
+          {
+            type: "poa",
+            status: "verified",
+            fileName: "utility-bill.pdf",
+            uploadedAt: "2025-03-21T10:03:00Z",
+            expiresAt: "2026-11-30T00:00:00Z",
+            rejectionReason: null,
+          },
+          {
+            type: "selfie",
+            status: "verified",
+            fileName: "selfie.jpg",
+            uploadedAt: "2025-03-21T10:05:00Z",
+            expiresAt: null,
+            rejectionReason: null,
+          },
+        ],
+        security: {
+          backupCodesRemaining: 8,
+          passwordChangedAt: "2026-06-02T08:00:00Z",
+          sessions: [
+            {
+              id: "s_current",
+              device: "Chrome on Windows",
+              location: "Dhaka, Bangladesh",
+              ip: "103.•••.•••.24",
+              lastActiveAt: ago(0),
+              current: true,
+            },
+            {
+              id: "s_phone",
+              device: "WinproFX app on iPhone",
+              location: "Dhaka, Bangladesh",
+              ip: "103.•••.•••.88",
+              lastActiveAt: ago(5),
+              current: false,
+            },
+            {
+              id: "s_old",
+              device: "Safari on macOS",
+              location: "Chattogram, Bangladesh",
+              ip: "27.•••.•••.140",
+              lastActiveAt: ago(24 * 9),
+              current: false,
+            },
+          ],
+          loginHistory: [
+            { at: ago(0), device: "Chrome on Windows", location: "Dhaka, Bangladesh", result: "success" },
+            {
+              at: ago(5),
+              device: "WinproFX app on iPhone",
+              location: "Dhaka, Bangladesh",
+              result: "success",
+            },
+            {
+              at: ago(30),
+              device: "Chrome on Windows",
+              location: "Dhaka, Bangladesh",
+              result: "twoFactorFailed",
+            },
+            { at: ago(31), device: "Chrome on Windows", location: "Dhaka, Bangladesh", result: "failed" },
+            {
+              at: ago(24 * 9),
+              device: "Safari on macOS",
+              location: "Chattogram, Bangladesh",
+              result: "success",
+            },
+          ],
+        },
+        pendingTotpSecret: null,
+        preferences: prefs,
+        tickets: seedTickets(now),
+      }
+    : {
+        phone: null,
+        dateOfBirth: null,
+        state: null,
+        city: null,
+        address: null,
+        postcode: null,
+        kyc: (["poiFront", "poiBack", "poa", "selfie"] as const).map((type) => ({
+          type,
+          status: "missing" as const,
+          fileName: null,
+          uploadedAt: null,
+          expiresAt: null,
+          rejectionReason: null,
+        })),
+        security: {
+          backupCodesRemaining: 0,
+          passwordChangedAt: null,
+          sessions: [
+            {
+              id: "s_current",
+              device: "This browser",
+              location: "—",
+              ip: "•••",
+              lastActiveAt: ago(0),
+              current: true,
+            },
+          ],
+          loginHistory: [{ at: ago(0), device: "This browser", location: "—", result: "success" }],
+        },
+        pendingTotpSecret: null,
+        preferences: prefs,
+        tickets: [],
+      };
+  store.set(userId, a);
+  return a;
 }
