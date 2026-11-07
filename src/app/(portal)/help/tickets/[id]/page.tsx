@@ -1,11 +1,13 @@
-import { getTranslations } from "next-intl/server";
-import { RouteStub } from "@/components/shell/coming-soon";
+import { notFound } from "next/navigation";
+import { TicketDetailView } from "@/components/help/ticket-detail-view";
 import { navMetadata } from "@/lib/page";
 
 export const generateMetadata = () => navMetadata("ticket");
 
-/** Stub: the screen for this route is built in a later phase. */
-export default async function Page() {
-  const t = await getTranslations("nav");
-  return <RouteStub title={t("ticket")} backHref="/help/tickets" />;
+type Props = { params: Promise<{ id: string }> };
+
+export default async function Page({ params }: Props) {
+  const { id } = await params;
+  if (!/^[\w-]{1,40}$/.test(id)) notFound();
+  return <TicketDetailView id={id} />;
 }

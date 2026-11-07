@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { parseAsArrayOf, parseAsInteger, parseAsString, parseAsStringLiteral, useQueryStates } from "nuqs";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { DataTable, type DataColumnMeta } from "@/components/common/data-table";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
@@ -88,8 +88,11 @@ export function TransactionsView() {
     q: parseAsString.withDefault(""),
     page: parseAsInteger.withDefault(1),
     size: parseAsInteger.withDefault(25),
+    /** Open transaction (deep-linkable, e.g. from a support ticket). */
+    tx: parseAsString,
   });
-  const [openId, setOpenId] = useState<string | null>(null);
+  const openId = f.tx;
+  const setOpenId = useCallback((id: string | null) => void setF({ tx: id }), [setF]);
   const [search, setSearch] = useState(f.q);
   const [exporting, setExporting] = useState(false);
 
@@ -243,7 +246,7 @@ export function TransactionsView() {
         cell: ({ row }) => <RowMenu tx={row.original} onOpen={() => setOpenId(row.original.id)} />,
       },
     ],
-    [t, tt, tf, fmt, accounts],
+    [t, tt, tf, fmt, accounts, setOpenId],
   );
 
   async function exportCsv() {

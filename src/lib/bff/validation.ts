@@ -1,6 +1,7 @@
 import type { ZodType } from "zod";
 import {
   AddPayoutInput,
+  ChatMessageInput,
   ChangePasswordInput,
   KycUploadInput,
   NewTicketInput,
@@ -21,6 +22,7 @@ import {
  * validate on the client and in the BFF). First match wins.
  */
 export const MUTATION_SCHEMAS: { method: string; path: RegExp; schema: ZodType }[] = [
+  { method: "POST", path: /^chat\/messages$/, schema: ChatMessageInput },
   { method: "POST", path: /^accounts$/, schema: OpenAccountInput },
   { method: "PATCH", path: /^accounts\/\d+$/, schema: RenameAccountInput },
   { method: "POST", path: /^accounts\/\d+\/leverage$/, schema: ChangeLeverageInput },

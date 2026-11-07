@@ -2,8 +2,9 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { useUiStore } from "@/lib/stores/ui";
 
 /**
  * Bottom action bar for money flows: one row with Back and the primary action.
@@ -21,6 +22,9 @@ export function StickyActionBar({
   summary?: ReactNode;
 }) {
   const t = useTranslations("funds");
+  const addStickyBar = useUiStore((s) => s.addStickyBar);
+  // The chat launcher hides while a stepper footer is on screen (brief §6.11).
+  useEffect(() => addStickyBar(), [addStickyBar]);
   return (
     <>
       {/* Spacer so the fixed bar never covers the last field on mobile. */}

@@ -328,7 +328,8 @@
     "descriptionShort": "Describe the issue in at least 20 characters so we can help faster.",
     "replyRequired": "Write a reply first.",
     "categoryRequired": "Choose a category.",
-    "emailSame": "That's already your sign-in email. Enter a different one."
+    "emailSame": "That's already your sign-in email. Enter a different one.",
+    "fileTooLarge": "Each file must be 10 MB or smaller. Choose a smaller file."
   },
   "notificationsKinds": {
     "deposit": "Deposit",

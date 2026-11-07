@@ -1,5 +1,6 @@
 "use client";
 
+import { ChatLauncher } from "@/components/help/chat-launcher";
 import { Menu, Search } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -109,6 +110,7 @@ export function AppShell({ groups, initialExpanded, theme, footer, children }: A
       </div>
 
       <CommandSearch groups={groups} open={search} onOpenChange={setSearch} />
+      <ChatLauncher />
     </div>
   );
 }

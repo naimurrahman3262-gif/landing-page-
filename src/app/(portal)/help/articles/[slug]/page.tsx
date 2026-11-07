@@ -1,11 +1,13 @@
-import { getTranslations } from "next-intl/server";
-import { RouteStub } from "@/components/shell/coming-soon";
+import { notFound } from "next/navigation";
+import { ArticleView } from "@/components/help/article-view";
 import { navMetadata } from "@/lib/page";
 
 export const generateMetadata = () => navMetadata("article");
 
-/** Stub: the screen for this route is built in a later phase. */
-export default async function Page() {
-  const t = await getTranslations("nav");
-  return <RouteStub title={t("article")} backHref="/help" />;
+type Props = { params: Promise<{ slug: string }> };
+
+export default async function Page({ params }: Props) {
+  const { slug } = await params;
+  if (!/^[a-z0-9-]{1,80}$/.test(slug)) notFound();
+  return <ArticleView slug={slug} />;
 }

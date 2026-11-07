@@ -689,3 +689,16 @@ export const TicketReplyInput = z.object({
   body: z.string().trim().min(1, "replyRequired").max(5000),
   attachments: z.array(z.object({ name: z.string(), size: z.number() })).max(5),
 });
+
+export const ChatMessageInput = z.object({
+  body: z.string().trim().min(1, "replyRequired").max(2000),
+  /** Page the user is on, so the agent has context (path only, no query string). */
+  context: z.object({ page: z.string().max(200) }),
+});
+export const ChatMessage = z.object({
+  id: z.string(),
+  author: z.enum(["client", "support"]),
+  body: z.string(),
+  at: z.string(),
+});
+export type ChatMessage = z.infer<typeof ChatMessage>;

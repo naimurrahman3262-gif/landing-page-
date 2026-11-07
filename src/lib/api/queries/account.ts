@@ -6,6 +6,7 @@ import { z } from "zod";
 import { apiFetch } from "@/lib/api/client";
 import {
   Article,
+  ChatMessage,
   Kyc,
   KycDocument,
   PayoutMethod,
@@ -29,7 +30,8 @@ export function useSaveProfile() {
   const qc = useQueryClient();
   const router = useRouter();
   return useMutation({
-    mutationFn: async (input: ProfileInput) => Profile.parse(await apiFetch("/profile", { method: "PATCH", body: input })),
+    mutationFn: async (input: ProfileInput) =>
+      Profile.parse(await apiFetch("/profile", { method: "PATCH", body: input })),
     onSuccess: (p) => {
       qc.setQueryData(["profile"], p);
       void qc.invalidateQueries({ queryKey: ["onboarding"] });
@@ -48,13 +50,11 @@ export function useUploadKyc() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (v: { type: KycDocType; file: File }) =>
-      z
-        .object({ document: KycDocument, status: z.string() })
-        .parse(
-          await apiFetch("/kyc/documents", {
-            body: { type: v.type, fileName: v.file.name, mimeType: v.file.type, size: v.file.size },
-          }),
-        ),
+      z.object({ document: KycDocument, status: z.string() }).parse(
+        await apiFetch("/kyc/documents", {
+          body: { type: v.type, fileName: v.file.name, mimeType: v.file.type, size: v.file.size },
+        }),
+      ),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["kyc"] });
       void qc.invalidateQueries({ queryKey: ["alerts"] });
@@ -68,7 +68,10 @@ export function useUploadKyc() {
 const securityKey = ["security"] as const;
 
 export function useSecurity() {
-  return useQuery({ queryKey: securityKey, queryFn: async () => SecurityOverview.parse(await apiFetch("/security")) });
+  return useQuery({
+    queryKey: securityKey,
+    queryFn: async () => SecurityOverview.parse(await apiFetch("/security")),
+  });
 }
 
 function useRefreshSecurity() {
@@ -83,7 +86,9 @@ function useRefreshSecurity() {
 export function useTwoFactorSetup() {
   return useMutation({
     mutationFn: async () =>
-      z.object({ secret: z.string(), otpauthUrl: z.string() }).parse(await apiFetch("/security/2fa/setup", { method: "POST" })),
+      z
+        .object({ secret: z.string(), otpauthUrl: z.string() })
+        .parse(await apiFetch("/security/2fa/setup", { method: "POST" })),
   });
 }
 
@@ -91,7 +96,9 @@ export function useEnableTwoFactor() {
   const refresh = useRefreshSecurity();
   return useMutation({
     mutationFn: async (code: string) =>
-      z.object({ backupCodes: z.array(z.string()) }).parse(await apiFetch("/security/2fa/enable", { body: { code } })),
+      z
+        .object({ backupCodes: z.array(z.string()) })
+        .parse(await apiFetch("/security/2fa/enable", { body: { code } })),
     onSuccess: refresh,
   });
 }
@@ -119,7 +126,12 @@ export function useChangeEmail() {
     mutationFn: async (v: { email: string; stepUpToken: string }) =>
       z
         .object({ pendingEmail: z.string(), sentTo: z.string() })
-        .parse(await apiFetch("/security/email", { body: { email: v.email }, headers: { "x-step-up": v.stepUpToken } })),
+        .parse(
+          await apiFetch("/security/email", {
+            body: { email: v.email },
+            headers: { "x-step-up": v.stepUpToken },
+          }),
+        ),
   });
 }
 
@@ -137,14 +149,18 @@ export function useRevokeSession() {
 /* ------------------------------ preferences ------------------------------ */
 
 export function usePreferences() {
-  return useQuery({ queryKey: ["preferences"], queryFn: async () => Preferences.parse(await apiFetch("/preferences")) });
+  return useQuery({
+    queryKey: ["preferences"],
+    queryFn: async () => Preferences.parse(await apiFetch("/preferences")),
+  });
 }
 
 export function useSavePreferences() {
   const qc = useQueryClient();
   const router = useRouter();
   return useMutation({
-    mutationFn: async (p: Preferences) => Preferences.parse(await apiFetch("/preferences", { method: "PATCH", body: p })),
+    mutationFn: async (p: Preferences) =>
+      Preferences.parse(await apiFetch("/preferences", { method: "PATCH", body: p })),
     onSuccess: (p) => {
       qc.setQueryData(["preferences"], p);
       router.refresh(); // time zone and language come from the server layout
@@ -160,7 +176,12 @@ export function useUpdatePayoutMethod() {
     mutationFn: async (v: { id: string; label?: string; isDefault?: boolean }) =>
       z
         .object({ payoutMethod: PayoutMethod })
-        .parse(await apiFetch(`/payout-methods/${v.id}`, { method: "PATCH", body: { label: v.label, isDefault: v.isDefault } })),
+        .parse(
+          await apiFetch(`/payout-methods/${v.id}`, {
+            method: "PATCH",
+            body: { label: v.label, isDefault: v.isDefault },
+          }),
+        ),
     onSuccess: () => qc.invalidateQueries({ queryKey: fundsKeys.payouts }),
   });
 }
@@ -190,19 +211,27 @@ export function useArticles(q = "", category?: string) {
 }
 
 export function useArticle(slug: string) {
-  return useQuery({ queryKey: ["article", slug], queryFn: async () => Article.parse(await apiFetch(`/help/articles/${slug}`)) });
+  return useQuery({
+    queryKey: ["article", slug],
+    queryFn: async () => Article.parse(await apiFetch(`/help/articles/${slug}`)),
+  });
 }
 
 export function useTickets(status: string, q: string) {
   return useQuery({
     queryKey: ["tickets", status, q],
     queryFn: async () =>
-      z.object({ items: z.array(Ticket) }).parse(await apiFetch(`/tickets?status=${status}&q=${encodeURIComponent(q)}`)).items,
+      z
+        .object({ items: z.array(Ticket) })
+        .parse(await apiFetch(`/tickets?status=${status}&q=${encodeURIComponent(q)}`)).items,
   });
 }
 
 export function useTicket(id: string) {
-  return useQuery({ queryKey: ["ticket", id], queryFn: async () => Ticket.parse(await apiFetch(`/tickets/${id}`)) });
+  return useQuery({
+    queryKey: ["ticket", id],
+    queryFn: async () => Ticket.parse(await apiFetch(`/tickets/${id}`)),
+  });
 }
 
 export function useCreateTicket() {
@@ -233,5 +262,16 @@ export function useCloseTicket(id: string) {
       qc.setQueryData(["ticket", id], t);
       void qc.invalidateQueries({ queryKey: ["tickets"] });
     },
+  });
+}
+
+/* ---------------------------------- chat --------------------------------- */
+
+export function useSendChat() {
+  return useMutation({
+    mutationFn: async (v: { body: string; page: string }) =>
+      z
+        .object({ reply: ChatMessage })
+        .parse(await apiFetch("/chat/messages", { body: { body: v.body, context: { page: v.page } } })).reply,
   });
 }
