@@ -1,11 +1,8 @@
-import { getTranslations } from "next-intl/server";
-import { RouteStub } from "@/components/shell/coming-soon";
+import { PreferencesView } from "@/components/account/preferences-view";
 import { navMetadata } from "@/lib/page";
 
 export const generateMetadata = () => navMetadata("preferences");
 
-/** Stub: the screen for this route is built in a later phase. */
-export default async function Page() {
-  const t = await getTranslations("nav");
-  return <RouteStub title={t("preferences")} />;
+export default function Page() {
+  return <PreferencesView />;
 }

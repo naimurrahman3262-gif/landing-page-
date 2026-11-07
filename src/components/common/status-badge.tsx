@@ -57,7 +57,16 @@ const toneClasses: Record<Tone, string> = {
   neutral: "bg-neutral-soft text-text-2",
 };
 
-export function StatusBadge({ status, className }: { status: Status; className?: string }) {
+export function StatusBadge({
+  status,
+  label,
+  className,
+}: {
+  status: Status;
+  /** Overrides the default word when context needs a more specific one ("On", "Wrong password"). */
+  label?: string;
+  className?: string;
+}) {
   const t = useTranslations("status");
   const { tone, icon: Icon } = STATUSES[status];
   return (
@@ -71,7 +80,7 @@ export function StatusBadge({ status, className }: { status: Status; className?:
       )}
     >
       <Icon aria-hidden className="size-3.5" />
-      {t(status)}
+      {label ?? t(status)}
     </span>
   );
 }

@@ -92,7 +92,7 @@ export function AppShell({ groups, initialExpanded, theme, footer, children }: A
               <Search aria-hidden className="size-5!" />
             </Button>
             <NotificationBell />
-            <ThemeToggle initial={theme} />
+            <ThemeToggle key={theme} initial={theme} />
             <ProfileMenu />
           </div>
         </header>
