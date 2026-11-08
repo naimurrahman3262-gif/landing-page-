@@ -164,7 +164,7 @@ export function portfolio(userId: string): Portfolio {
 }
 
 /** The verified persona and its test clones get the full fixture set. */
-function isVerifiedPersona(userId: string): boolean {
+export function isVerifiedPersona(userId: string): boolean {
   return userId === "u_1001" || !!db().users.get(userId)?.email.startsWith("verified+");
 }
 

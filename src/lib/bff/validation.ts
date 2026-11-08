@@ -2,6 +2,8 @@ import type { ZodType } from "zod";
 import {
   AddPayoutInput,
   ChatMessageInput,
+  FavouriteInput,
+  WatchlistInput,
   ChangePasswordInput,
   KycUploadInput,
   NewTicketInput,
@@ -23,6 +25,8 @@ import {
  */
 export const MUTATION_SCHEMAS: { method: string; path: RegExp; schema: ZodType }[] = [
   { method: "POST", path: /^chat\/messages$/, schema: ChatMessageInput },
+  { method: "PUT", path: /^insights\/watchlist$/, schema: WatchlistInput },
+  { method: "PUT", path: /^insights\/signals\/[\w-]+\/favourite$/, schema: FavouriteInput },
   { method: "POST", path: /^accounts$/, schema: OpenAccountInput },
   { method: "PATCH", path: /^accounts\/\d+$/, schema: RenameAccountInput },
   { method: "POST", path: /^accounts\/\d+\/leverage$/, schema: ChangeLeverageInput },

@@ -127,6 +127,12 @@
 }
 
 /* Layout tokens for overlays (brief §2.4: no ad-hoc arbitrary values in components). */
+/* Embeds fill the viewport below the header unless the provider reports a height. */
+@utility h-embed {
+  height: calc(100dvh - 13rem);
+  min-height: 32rem;
+}
+
 @utility max-h-dialog {
   max-height: calc(100dvh - 2rem);
 }

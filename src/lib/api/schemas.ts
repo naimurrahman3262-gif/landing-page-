@@ -702,3 +702,111 @@ export const ChatMessage = z.object({
   at: z.string(),
 });
 export type ChatMessage = z.infer<typeof ChatMessage>;
+
+/* -------------------------------- insights ------------------------------- */
+
+export const Market = z.enum(["fx", "metals", "crypto", "indices"]);
+export type Market = z.infer<typeof Market>;
+
+/** Sentiment is only shown when the API says where it came from and when (§6.6). */
+export const Sentiment = z.object({
+  source: z.string().nullable(),
+  asOf: z.string().nullable(),
+  items: z.array(z.object({ symbol: z.string(), longPercent: z.number().min(0).max(100) })),
+});
+export type Sentiment = z.infer<typeof Sentiment>;
+
+export const SignalDirection = z.enum(["buy", "neutral", "sell"]);
+export const Signal = z.object({
+  id: z.string(),
+  symbol: z.string(),
+  group: z.enum(["major", "minor", "exotic"]),
+  direction: SignalDirection,
+  timeframe: z.string(),
+  entry: z.number(),
+  target: z.number().nullable(),
+  stop: z.number().nullable(),
+  digits: z.number().int(),
+  summary: z.string(),
+  source: z.string(),
+  issuedAt: z.string(),
+  favourite: z.boolean(),
+});
+export type Signal = z.infer<typeof Signal>;
+
+export const MarketQuote = z.object({ symbol: z.string(), bid: z.number(), ask: z.number(), at: z.string() });
+export type MarketQuote = z.infer<typeof MarketQuote>;
+
+/** SSO handoff for a third-party embed (Autochartist, social trading, PAMM). */
+export const EmbedSession = z.object({
+  /** https URL from the provider, or a same-origin path (mock builds). */
+  url: z.string().regex(/^(https:\/\/|\/(?!\/))/),
+  expiresAt: z.string(),
+});
+export type EmbedSession = z.infer<typeof EmbedSession>;
+
+/* --------------------------------- rewards ------------------------------- */
+
+export const FUNNEL_STAGES = [
+  "clicks",
+  "registered",
+  "kycApproved",
+  "webinar",
+  "eligible",
+  "rewarded",
+] as const;
+export const ReferralStatus = z.enum([
+  "registered",
+  "kycApproved",
+  "webinar",
+  "eligible",
+  "rewarded",
+  "expired",
+]);
+export const Referral = z.object({
+  id: z.string(),
+  /** Masked by the backend: "Ayesha K." */
+  name: z.string(),
+  joinedAt: z.string(),
+  status: ReferralStatus,
+  reward: z.number().nullable(),
+});
+export type Referral = z.infer<typeof Referral>;
+
+export const ReferralProgram = z.object({
+  link: z.string().url(),
+  code: z.string(),
+  currency: z.string(),
+  /** Reward per step of "How it works". */
+  rewards: z.object({
+    referrer: z.number(),
+    friend: z.number(),
+    minDeposit: z.number(),
+    minLots: z.number(),
+  }),
+  funnel: z.object({
+    clicks: z.number().int().nonnegative(),
+    registered: z.number().int().nonnegative(),
+    kycApproved: z.number().int().nonnegative(),
+    webinar: z.number().int().nonnegative(),
+    eligible: z.number().int().nonnegative(),
+    rewarded: z.number().int().nonnegative(),
+  }),
+  earnings: z.object({ total: z.number(), pending: z.number() }),
+  referrals: z.array(Referral),
+  campaign: z
+    .object({
+      name: z.string(),
+      startedAt: z.string(),
+      endsAt: z.string(),
+      /** Set once the campaign is over. */
+      endedAt: z.string().nullable(),
+      summary: z.string(),
+    })
+    .nullable(),
+  syncedAt: z.string(),
+});
+export type ReferralProgram = z.infer<typeof ReferralProgram>;
+
+export const WatchlistInput = z.object({ symbols: z.array(z.string().regex(/^[A-Z0-9]{3,10}$/)).max(12) });
+export const FavouriteInput = z.object({ favourite: z.boolean() });

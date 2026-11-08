@@ -1,6 +1,7 @@
 import { accountHandlers } from "./account";
 import { authHandlers } from "./auth";
 import { fundsHandlers } from "./funds";
+import { insightsHandlers } from "./insights";
 import { portfolioHandlers } from "./portfolio";
 import { systemHandlers } from "./system";
 import { tradingHandlers } from "./trading";
@@ -15,4 +16,5 @@ export const handlers = [
   ...portfolioHandlers,
   ...fundsHandlers,
   ...accountHandlers,
+  ...insightsHandlers,
 ];
