@@ -100,9 +100,9 @@ function Hero({ p }: { p: ReferralProgram }) {
     ["email", links.email, Mail],
   ] as const;
   return (
-    <Card className="grid gap-6 md:grid-cols-3">
-      <div className="grid content-start gap-4 md:col-span-2">
-        <div className="grid gap-2">
+    <Card className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div className="grid min-w-0 grid-cols-1 content-start gap-4 md:col-span-2">
+        <div className="grid grid-cols-1 gap-2">
           <span className="text-sm font-medium" id="ref-link-label">
             {t("yourLink")}
           </span>

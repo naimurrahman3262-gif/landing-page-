@@ -41,3 +41,31 @@ Maps every audit issue ID to the component/route that fixes it. Filled in phase 
 | Preferences incl. sound (old "Audio feedback")                                          | `account/preferences-view.tsx`                                                                                           | e2e "Preferences…"                                           |
 | Platforms moved from Settings; no marketing claims                                      | `trading/platforms-view.tsx`                                                                                             | e2e "Platforms…"                                             |
 | Step-up on every sensitive action (appendix: MT5 password change without step-up)       | `common/step-up-auth-dialog.tsx` on MT5 password, leverage, withdrawal, add payout, remove payout, 2FA off, email change | e2e in `trading.spec.ts`, `funds.spec.ts`, `account.spec.ts` |
+
+## Flow 9: Insights (Phase 7)
+
+| Brief §6.6 item                                                                        | Fixed in                                             | Test                                          |
+| -------------------------------------------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------- |
+| Only enabled modules appear                                                            | `config/features.ts`, `lib/nav.ts`, `ComingSoon`     | e2e "Feature flags…"                          |
+| News: feed first, filters in a top bar, settings in a sheet, dark TradingView timeline | `insights/news-view.tsx`                             | e2e "News…"                                   |
+| Sentiment only with source + timestamp                                                 | `SentimentCard` in `news-view.tsx`                   | e2e "News…"                                   |
+| Signals: two panes / sheet, icon + text + colour, legend, search, groups, favourites   | `insights/signals-view.tsx`                          | e2e "Signals…"                                |
+| Analysis: Autochartist in EmbedFrame with an error state                               | `insights/analysis-view.tsx`, `embeds/*`             | e2e "Analysis…", "Embed timeout…"             |
+| Native calculators with validated inputs                                               | `insights/calculator-view.tsx`, `lib/calculators.ts` | unit `calculators.test.ts`, e2e "Calculator…" |
+
+## Flow 7: Invest (Phase 7)
+
+| Brief §6.7 item                                                            | Fixed in                                         | Test                              |
+| -------------------------------------------------------------------------- | ------------------------------------------------ | --------------------------------- |
+| Plain intro, risk line, no profit promises                                 | `invest/invest-view.tsx`                         | e2e "Invest…"                     |
+| Full-height embed via SSO handoff; Refresh · Full screen · Open in new tab | `embeds/sso-embed.tsx`, `embeds/embed-frame.tsx` | e2e "Analysis…", "Embed timeout…" |
+
+## Flow 8: Rewards (Phase 7)
+
+| Brief §6.8 item                                                                       | Fixed in                                         | Test                                       |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------ | ------------------------------------------ |
+| Hero: link, Copy, Share (WhatsApp, Telegram, X, email), QR; How it works with amounts | `rewards/referrals-view.tsx`, `lib/referrals.ts` | unit `referrals.test.ts`, e2e "Referrals…" |
+| Monotonic funnel, validated in the mock, flagged in dev                               | `funnelViolations`, `mocks/handlers/insights.ts` | unit `referrals.test.ts`                   |
+| Earnings as money; one status model with a next-step column                           | `referrals-view.tsx`                             | e2e "Referrals…"                           |
+| Campaign ended state ("Ended 24 Oct 2026")                                            | `CampaignCard`                                   | e2e "Referrals…"                           |
+| Campaign accounts badged in Trading → Accounts                                        | `trading/account-card.tsx` (Phase 4)             | Phase 4 e2e                                |

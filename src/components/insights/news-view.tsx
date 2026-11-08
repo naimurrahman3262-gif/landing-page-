@@ -165,7 +165,7 @@ export function SentimentCard({ data }: { data: Sentiment }) {
   const fmt = useFormatDate();
   if (!data.source || !data.asOf || data.items.length === 0) return null;
   return (
-    <Card className="grid content-start gap-4">
+    <Card className="grid content-start gap-4 self-start">
       <CardTitle>{t("sentiment")}</CardTitle>
       <ul className="grid gap-3">
         {data.items.map((i) => {
